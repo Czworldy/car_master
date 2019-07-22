@@ -143,7 +143,8 @@ void Encoder_Init_Radius(void)
 	}
 	
 	Speed_X = Speed_Y = 0;
-	Speed_Rotation = 200;
+	Speed_Rotation = 40;
+	//Speed_Rotation = 200;
 	SetSpeed(Speed_X,Speed_Y,Speed_Rotation);
 	
 	Show_Keyboard();

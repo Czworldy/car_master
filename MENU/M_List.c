@@ -22,7 +22,7 @@ struct M_Type MainMenu[M_NUM]=
 	{"1.System",        M_SMenu,                NULL,               {MainMenu, M_System} },
 	{"2.Route",         M_SMenu,                NULL,               {MainMenu, M_Route} },
 	{"3.Process",       M_SMenu,                NULL,               {MainMenu, M_Process} },
-	{"version 1.0", 	M_Empty,        		NULL,               {MainMenu, NULL} },
+	{"version 2.0", 	M_Empty,        		NULL,               {MainMenu, NULL} },
 	{" ",               M_Empty,                NULL,               {MainMenu, NULL} },
 	{" ",               M_Empty,                NULL,               {MainMenu, NULL} },
 	{" ",               M_Empty,                NULL,               {MainMenu, NULL} },

@@ -349,26 +349,26 @@ void Motor_Set_Enabled(u8 enabled)
 }
 /********************************PanTilt Motor*****************************/
 
-void Set_PanTilt_Angle_withspeed(int64_t angle, int32_t speed)
-{
-	u8 i;
-	u8 sum = 0;
-	
-	PanTilt_TxBuffer[0] = 0x3E;
-	PanTilt_TxBuffer[1] = 0xA4;
-	PanTilt_TxBuffer[2] = 0x01;
-	PanTilt_TxBuffer[3] = 0x0C;
-	PanTilt_TxBuffer[4] = 0xEF;
-	for(i = 0;i < 8;i++)
-		PanTilt_TxBuffer[5+i] = *((int8_t*)(&angle)+i);
-	for(i = 0;i < 4;i++)
-		PanTilt_TxBuffer[13+i] = *((int8_t*)(&speed)+i);
-	for(i = 5;i < 17;i++)
-		sum += PanTilt_TxBuffer[i];
-	PanTilt_TxBuffer[17] = sum;
-	
-	DMA_SetCurrDataCounter(USART6_DMA_TX_STREAM, PanTilt_TxBufferSize);
-	DMA_Cmd(USART6_DMA_TX_STREAM, ENABLE);
-}
+//void Set_PanTilt_Angle_withspeed(int64_t angle, int32_t speed)
+//{
+//	u8 i;
+//	u8 sum = 0;
+//	
+//	PanTilt_TxBuffer[0] = 0x3E;
+//	PanTilt_TxBuffer[1] = 0xA4;
+//	PanTilt_TxBuffer[2] = 0x01;
+//	PanTilt_TxBuffer[3] = 0x0C;
+//	PanTilt_TxBuffer[4] = 0xEF;
+//	for(i = 0;i < 8;i++)
+//		PanTilt_TxBuffer[5+i] = *((int8_t*)(&angle)+i);
+//	for(i = 0;i < 4;i++)
+//		PanTilt_TxBuffer[13+i] = *((int8_t*)(&speed)+i);
+//	for(i = 5;i < 17;i++)
+//		sum += PanTilt_TxBuffer[i];
+//	PanTilt_TxBuffer[17] = sum;
+//	
+//	DMA_SetCurrDataCounter(USART6_DMA_TX_STREAM, PanTilt_TxBufferSize);
+//	DMA_Cmd(USART6_DMA_TX_STREAM, ENABLE);
+//}
 
 

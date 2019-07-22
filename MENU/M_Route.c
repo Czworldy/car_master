@@ -113,7 +113,7 @@ void route_Line(void)
 	
 	LCD_Clear(WHITE);
 	LCD_printf(0,6+36*0,300,24,24,"GoLine");
-	while (!(GetLength(&(GPS_List[0].position), &aim_point.aim_position) < 20.0 && fabs(GPS_List[0].radian - aim_point.aim_radian) < 2.0*DEG2RAD))
+	while (!(GetLength(&(GPS_List[0].position), &aim_point.aim_position) < 10.0 && fabs(GPS_List[0].radian - aim_point.aim_radian) < 1.0*DEG2RAD))
 	{
 		GoLine();
 		

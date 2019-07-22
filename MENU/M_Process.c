@@ -6498,35 +6498,35 @@ void Return_Center(void)
 	SPEED_STOP;
 	SetSpeed(Speed_X, Speed_Y, Speed_Rotation);
 }
-void Go_Task_1_Take_Point(u8 Point_Num)
-{
-	struct Line_Point aim_line_point;
-	u8 is_key = 0;
-	
-	aim_line_point = Task_1_Take_Point[Point_Num - 1];
-	SetLine(&aim_line_point);
-	while (!(GetLength(&(GPS_List[0].position), &Aim_Line_Point.aim_position) < 10.0 && fabs(GPS_List[0].radian - Aim_Line_Point.aim_radian) < 1.0 * DEG2RAD))
-	{
-		GoLine();
-		
-		is_key = keyScan(1);
-		if (is_key)
-		{
-			is_key = 0;
-			switch(keyValue)
-			{
-				/*case keyback:
-					SPEED_STOP;
-					SetSpeed(Speed_X, Speed_Y, Speed_Rotation);
-					return; */
-				default:
-					break;
-			}
-		}
-	}
-	SPEED_STOP;
-	SetSpeed(Speed_X, Speed_Y, Speed_Rotation);
-}
+//void Go_Task_1_Take_Point(u8 Point_Num)
+//{
+//	struct Line_Point aim_line_point;
+//	u8 is_key = 0;
+//	
+//	aim_line_point = Task_1_Take_Point[Point_Num - 1];
+//	SetLine(&aim_line_point);
+//	while (!(GetLength(&(GPS_List[0].position), &Aim_Line_Point.aim_position) < 10.0 && fabs(GPS_List[0].radian - Aim_Line_Point.aim_radian) < 1.0 * DEG2RAD))
+//	{
+//		GoLine();
+//		
+//		is_key = keyScan(1);
+//		if (is_key)
+//		{
+//			is_key = 0;
+//			switch(keyValue)
+//			{
+//				/*case keyback:
+//					SPEED_STOP;
+//					SetSpeed(Speed_X, Speed_Y, Speed_Rotation);
+//					return; */
+//				default:
+//					break;
+//			}
+//		}
+//	}
+//	SPEED_STOP;
+//	SetSpeed(Speed_X, Speed_Y, Speed_Rotation);
+//}
 void process_Point_Test(void)
 {
 //	struct Line_Point aim_line_point;

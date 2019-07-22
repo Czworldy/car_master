@@ -152,10 +152,10 @@ void GoLine(void)
 	Vout_A = 1000*AnglePID(error_angle, &Pid_List[PID_List_Index << 1]);
 	Vout_D = DistancePID(error_dis, &Pid_List[(PID_List_Index << 1) | 1]);
 	
-	if (Vout_A >= 300)
-		Vout_A = 300;
-	if (Vout_A <= -300)
-		Vout_A = -300;
+	if (Vout_A >= 100)  //300
+		Vout_A = 100;
+	if (Vout_A <= -100)
+		Vout_A = -100;
 	
 	//PID调整速度的分量
 	v_err_x = -Vout_D * sin_temp;
