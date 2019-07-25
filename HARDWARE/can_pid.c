@@ -51,16 +51,37 @@ float PID_DJI(pid_t *pid, float get, float set){
 	pid->err[NOW] = set - get;	//set - measure
 	
 	
-	pid->pout = pid->p * (pid->err[NOW] - pid->err[LAST]);
-	pid->iout = pid->i * pid->err[NOW];
-	pid->dout = pid->d * (pid->err[NOW] - 2*pid->err[LAST] + pid->err[LLAST]);
+//	pid->pout = pid->p * (pid->err[NOW] - pid->err[LAST]);
+//	pid->iout = pid->i * pid->err[NOW];
+//	pid->dout = pid->d * (pid->err[NOW] - 2*pid->err[LAST] + pid->err[LLAST]);
 
-	abs_limit(&(pid->iout), pid->IntegralLimit);//???
-	pid->delta_u = pid->pout + pid->iout + pid->dout;
-	pid->delta_out = pid->last_delta_out + pid->delta_u;
-	abs_limit(&(pid->delta_out), pid->MaxOutput);
-	pid->last_delta_out = pid->delta_out;	//update last time
-	
+//	abs_limit(&(pid->iout), pid->IntegralLimit);//???
+//	pid->delta_u = pid->pout + pid->iout + pid->dout;
+//	pid->delta_out = pid->last_delta_out + pid->delta_u;
+//	abs_limit(&(pid->delta_out), pid->MaxOutput);
+//	pid->last_delta_out = pid->delta_out;	//update last time
+	if(pid->pid_mode == POSITION_PID) //位置式p
+    {
+        pid->pout = pid->p * pid->err[NOW];
+        pid->iout += pid->i * pid->err[NOW];
+        pid->dout = pid->d * (pid->err[NOW] - pid->err[LAST] );
+        abs_limit(&(pid->iout), pid->IntegralLimit);
+        pid->pos_out = pid->pout + pid->iout + pid->dout;
+        abs_limit(&(pid->pos_out), pid->MaxOutput);
+        pid->last_pos_out = pid->pos_out;	//update last time 
+    }
+    else if(pid->pid_mode == DELTA_PID)//增量式P
+    {
+        pid->pout = pid->p * (pid->err[NOW] - pid->err[LAST]);
+        pid->iout = pid->i * pid->err[NOW];
+        pid->dout = pid->d * (pid->err[NOW] - 2*pid->err[LAST] + pid->err[LLAST]);
+        
+        abs_limit(&(pid->iout), pid->IntegralLimit);
+        pid->delta_u = pid->pout + pid->iout + pid->dout;
+        pid->delta_out = pid->last_delta_out + pid->delta_u;
+        abs_limit(&(pid->delta_out), pid->MaxOutput);
+        pid->last_delta_out = pid->delta_out;	//update last time
+    }
 	
 	pid->err[LLAST] = pid->err[LAST];
 	pid->err[LAST] = pid->err[NOW];
@@ -70,7 +91,7 @@ float PID_DJI(pid_t *pid, float get, float set){
 	pid->set[LAST] = pid->set[NOW];
 	
 	
-	return pid->delta_out;	
+	return pid->pid_mode==POSITION_PID ? pid->pos_out : pid->delta_out;;	
 }
 
 /**
@@ -152,22 +173,23 @@ void get_moto_chassis(int i)
 
 void PID_DJI_Handler(int i)
 {
-	
+	float pid_out;
+		
 	get_moto_chassis(i);
 	get_total_angle(&moto_chassis[i]);
 	if(Mode[i] == Speed_Mode)
 	{	
-		PID_DJI(&pid_spd[i], moto_chassis[i].speed_rpm, set_spd[i]);
+		pid_out = PID_DJI(&pid_spd[i], moto_chassis[i].speed_rpm, set_spd[i]);
 	}
 	else if(Mode[i] == Location_Mode)
 	{
-			PID_DJI(&pid_loc[i], moto_chassis[i].total_angle, set_loc[i]);
-			PID_DJI(&pid_spd[i], moto_chassis[i].speed_rpm, pid_loc[i].delta_out);
+			pid_out = PID_DJI(&pid_loc[i], moto_chassis[i].total_angle, set_loc[i]);
+			pid_out = PID_DJI(&pid_spd[i], moto_chassis[i].speed_rpm, pid_out);
 	}
 	if(i == 0)
-		set_moto_current(pid_spd[0].delta_out,0,0,0);
+		set_moto_current(pid_out,0,0,0);
 	else if(i == 1)
-		set_motor_voltage(pid_spd[1].delta_out,0,0,0);
+		set_motor_voltage(pid_out,0,0,0);
 }
 
 void PID_01(void){PID_DJI_Handler(0);}
@@ -181,9 +203,9 @@ void PID_Init(void)
 	PID_struct_init(&pid_loc[0], DELTA_PID, 9600, 9600,
 								0.80f,	0.003f,	0.000f	);  //4 motos angular location closeloop.}
 	PID_struct_init(&pid_spd[1], DELTA_PID, 30000, 30000,
-								24.0f,	1.2f,	0.02f	);  //4 motos angular rate closeloop.  0.80f,	0.03f,	0.0015f	(超调)
-	PID_struct_init(&pid_loc[1], DELTA_PID, 100, 100,
-								0.80f,	0.003f,	0.000f	);  //4 motos angular location closeloop.}
+								60.0f,	0.001f,	0.1f	);  //4 motos angular rate closeloop.  0.80f,	0.03f,	0.0015f	(超调)
+	PID_struct_init(&pid_loc[1], DELTA_PID, 50, 50,
+								2.0f,	0.005f,	0.00f	);  //0.80f,	0.003f,	0.000f	);  //4 motos angular location closeloop.}
 //	PID_struct_init(&pid_spd[2], DELTA_PID, 8000, 16384,
 //								24.0f,	1.2f,	0.02f	);  //4 motos angular rate closeloop.  0.80f,	0.03f,	0.0015f	(超调)
 //	PID_struct_init(&pid_loc[2], DELTA_PID, 9600, 9600,

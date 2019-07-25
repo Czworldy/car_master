@@ -1291,9 +1291,7 @@ void Input_Int64Value(int64_t *address,char *name)//长整型输入 longlong
 			delay_ms(1);
 	}
 }
-#define MAINMENU 	1
-#define KEYBOARD 	2
-#define ROWTYPE  	3
+
 
 u8 keyValue;
 

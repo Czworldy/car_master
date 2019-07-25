@@ -27,6 +27,10 @@
 #define TP_CATH_PRES 0x40  //有按键按下了 
 #define CT_MAX_TOUCH  5    //电容屏支持的点数,固定为5点
 
+#define MAINMENU 	1
+#define KEYBOARD 	2
+#define ROWTYPE  	3
+
 //触摸屏控制器
 typedef struct
 {

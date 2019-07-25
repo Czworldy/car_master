@@ -852,6 +852,8 @@ void sys_PanTilt(void)
 	u8 i, tp_last, key_value, is_key = 0;
 	int64_t angle = 0;
 	int32_t length = 0;
+
+	float DP=1.0, DI=0.003, DD=0.01, SP=30.0, SI=0.0, SD=0.0;
 	
 	LCD_Clear(WHITE);
 	KeyBoard_State = 0;
@@ -860,9 +862,15 @@ void sys_PanTilt(void)
 	
 	set_loc[1] = 0;
 	
-	LCD_printf(0,6+36*0,300,24,24,"1.SetPanT Angle=%lld",angle);
-	LCD_printf(0,6+36*1,300,24,24,"2.SetPanT Length=%d",length);
-	LCD_printf(0,6+36*2,300,24,24,"3.Go");
+	LCD_printf(0,6+36*0,300,24,24,"1.Set Angle=%lld",angle);
+	LCD_printf(0,6+36*1,300,24,24,"2.SetPanT Mode=%d",Mode[1]);
+	LCD_printf(0,6+36*2,300,24,24,"3.DP:%f",DP);
+	LCD_printf(0,6+36*3,300,24,24,"4.DI:%f",DI);
+	LCD_printf(0,6+36*4,300,24,24,"5.DD:%f",DD);
+	LCD_printf(0,6+36*5,300,24,24,"6.SP:%f",SP);
+	LCD_printf(0,6+36*6,300,24,24,"7.SI:%f",SI);
+	LCD_printf(0,6+36*7,300,24,24,"8.SD:%f",SD);
+	LCD_printf(0,6+36*8,300,24,24,"9.GO",Mode[1]);
 	while (1)
 	{
 		#ifdef BSP_USING_TOUCH_SCREEN
@@ -895,24 +903,57 @@ void sys_PanTilt(void)
 			{
 				case key1:
 					Input_Int64Value(&angle,"Angle");
+					set_loc[1] = angle;
+					set_spd[1] = angle;
 					break;
 				case key2:
-					Input_IntValue(&length,"Length");
+					set_loc[1] = 0;
+					set_spd[1] = 0;
+					if(Mode[1] == 1)
+						Mode[1] = 0;
+					else
+						Mode[1] = 1;
 					break;
 				case key3:
-					//Set_PanTilt_Angle_withspeed(angle,speed);
-					set_loc[0] = length; //range 400000
-					set_loc[1] = angle;
+					Input_FloatValue(&DP,"DP");
+					break;
+				case key4:
+					Input_FloatValue(&DI,"DI");
+					break;
+				case key5:
+					Input_FloatValue(&DD,"DD");
+					break;
+				case key6:
+					Input_FloatValue(&SP,"SP");
+					break;
+				case key7:
+					Input_FloatValue(&SI,"SI");
+					break;
+				case key8:
+					Input_FloatValue(&SD,"SD");
 					break;
 				case keyback:
 					set_loc[1] = 0;
+					set_spd[1] = 0;
 					return;
+				case key9:
+					PID_struct_init(&pid_spd[1], POSITION_PID, 30000, 30000,
+								SP,	SI,	SD	);  //4 motos angular rate closeloop.  0.80f,	0.03f,	0.0015f	(³¬µ÷)
+					PID_struct_init(&pid_loc[1], DELTA_PID, 200, 200,
+								DP,	DI,	DD	);  //0.80f,	0.003f,	0.000f	);  //4 motos angular location closeloop.}
+					break;
 				default:
 					break;
 			}
-			LCD_printf(0,6+36*0,300,24,24,"1.Set PanTilt Angle=%lld",angle);
-			LCD_printf(0,6+36*1,300,24,24,"2.Set PanTilt Speed=%d",length);
-			LCD_printf(0,6+36*2,300,24,24,"3.Go");
+			LCD_printf(0,6+36*0,300,24,24,"1.Set Angle=%lld",angle);
+			LCD_printf(0,6+36*1,300,24,24,"2.SetPanT Mode=%d",Mode[1]);
+			LCD_printf(0,6+36*2,300,24,24,"3.DP:%f",DP);
+			LCD_printf(0,6+36*3,300,24,24,"4.DI:%f",DI);
+			LCD_printf(0,6+36*4,300,24,24,"5.DD:%f",DD);
+			LCD_printf(0,6+36*5,300,24,24,"6.SP:%f",SP);
+			LCD_printf(0,6+36*6,300,24,24,"7.SI:%f",SI);
+			LCD_printf(0,6+36*7,300,24,24,"8.SD:%f",SD);
+			LCD_printf(0,6+36*8,300,24,24,"9.GO",Mode[1]);
 		}
 		else
 			delay_ms(1);

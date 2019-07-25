@@ -3,10 +3,14 @@
 #include <stdlib.h>
 
 struct CCD_State TSL1401_State[TSL1401_ADC_Channel_Size]  = {
-	{140.0/80.0, 1000, 1700, 3},	//Front
-	{140.0/80.0, 950, 1900, 1},	//Back
-	{140.0/80.0, 1400, 2000, 0},	//Left
-	{140.0/80.0, 175*16, 1200, 2},	//Right
+	{140.0/80.0, 3680, 1385, 3},	//Front
+	{100.0/102.0, 3897, 661, 1},	//Back
+	{140.0/80.0, 3633, 1538, 0},	//Left
+	{100.0/102.0, 3687, 1360, 2},	//Right
+//	{140.0/80.0, 1000, 1700, 3},	//Front
+//	{100.0/102.0, 950, 1900, 1},	//Back
+//	{140.0/80.0, 1400, 2000, 0},	//Left
+//	{100.0/102.0, 175*16, 1200, 2},	//Right
 };
 
 uint8_t TSL1401_Mode = 0;	//0:线为黑色，1:线为白色
@@ -129,7 +133,7 @@ void TSL1401_TIM_Init(void)
 	
 	TIM_TimeBaseInitStructure.TIM_Prescaler = 0;  //定时器分频
 	TIM_TimeBaseInitStructure.TIM_CounterMode = TIM_CounterMode_Up; //向上计数模式
-	TIM_TimeBaseInitStructure.TIM_Period = 4200-1;//14700-1;//4200-1;//16800-1;	//1680-1;   //自动重装载值
+	TIM_TimeBaseInitStructure.TIM_Period = 1680 - 1;//4200-1;//14700-1;//4200-1;//16800-1;	//1680-1;   //自动重装载值
 	TIM_TimeBaseInitStructure.TIM_ClockDivision = TIM_CKD_DIV1; 
 	
 	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseInitStructure);
@@ -317,7 +321,7 @@ void TSL1401_Find_ADC_Max_Min_Threshold(u8 find_adc_threshold_en)
 	}
 }
 
-void TSL1401_Edge_Detect(void)	//对应方向:0:成功,1:检测到全都为线,2:检测到全都为场地,3:未设定阈值
+void TSL1401_Edge_Detect(void)	//对应方向:0:成功,1:检测到全都为线,2:检测到全都为场地,3:未设定阈值,4:线宽超出
 {
 	u8 i, j, k;
 	struct CCD_State *ptr;
@@ -434,8 +438,12 @@ void TSL1401_Edge_Detect(void)	//对应方向:0:成功,1:检测到全都为线,2:检测到全都为
 				}
 			}
 		}
-		ptr->Line_Edge_Median_Pos = (ptr->Line_Edge_Left_Pos + ptr->Line_Edge_Right_Pos) / 2;
-		ptr->Line_Edge_Type = 0;
+		ptr->Line_Edge_Distance = ptr->Line_Edge_Left_Pos + ptr->Line_Edge_Right_Pos;
+		ptr->Line_Edge_Median_Pos = ptr->Line_Edge_Distance / 2;
+		if(ptr->Line_Edge_Distance > 40)
+			ptr->Line_Edge_Type = 4;
+		else
+			ptr->Line_Edge_Type = 0;
 	}
 }
 
@@ -443,6 +451,8 @@ void TSL1401_SetEnabled(u8 enabled)
 {
 	if (enabled)
 	{
+		TSL1401_Init();
+		
 		TIM_Cmd(TIM3, ENABLE);
 		DMA_SetCurrDataCounter(DMA2_Stream0, TSL1401_ADC_Channel_Size);
 		DMA_Cmd(DMA2_Stream0, ENABLE);
@@ -451,6 +461,11 @@ void TSL1401_SetEnabled(u8 enabled)
 	{
 		TIM_Cmd(TIM3, DISABLE);
 		DMA_Cmd(DMA2_Stream0, DISABLE);
+		
+		DMA_DeInit(DMA2_Stream0);
+		ADC_DeInit();
+		TIM_DeInit(TIM3);
+		
 		TSL1401_cnt = 0;
 		TSL1401_ADC_Buffer_Idx = 0;
 	}

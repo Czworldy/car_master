@@ -89,7 +89,7 @@ void PID_struct_init(
     float 	kd);
 extern int set_spd[];
 extern int64_t set_loc[];
-		
+extern int Mode[];
 
 void PID_Init(void);		
 

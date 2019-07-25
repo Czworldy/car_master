@@ -60,7 +60,7 @@ struct M_Type M_Process[M_NUM]=
 	{"3.Auto_RGB",      M_UFunc,                process_Auto_RGB,   {MainMenu, NULL} },
 	{"4.CCD_Auto_RGB",  M_UFunc,                process_CCD_Auto_RGB,{MainMenu, NULL} },
 	{"5.Point_Test",    M_UFunc,                process_Point_Test, {MainMenu, NULL} },
-	{" ",               M_Empty,                NULL,               {MainMenu, NULL} },
+	{"6.My_CCD_Test",   M_UFunc,                process_My_CCD_Test,{MainMenu, NULL} },
 	{" ",               M_Empty,                NULL,               {MainMenu, NULL} },
 	{" ",               M_Empty,                NULL,               {MainMenu, NULL} },
 };

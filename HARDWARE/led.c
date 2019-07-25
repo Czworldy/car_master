@@ -13,7 +13,7 @@ void LED_Init(void)
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
 	GPIO_Init(GPIOH, &GPIO_InitStructure);
 	
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_1;
 	GPIO_Init(GPIOI, &GPIO_InitStructure);
 	
 	LED0 = LED1 = LED2 = LED3 = LED_OFF;

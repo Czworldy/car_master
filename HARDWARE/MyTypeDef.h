@@ -115,6 +115,9 @@ struct CCD_State
 	
 	uint16_t ADC_Max;
 	uint16_t ADC_Min;
+	
+	uint8_t Line_Edge_Distance;
+	
 };
 
 //·½Ïò

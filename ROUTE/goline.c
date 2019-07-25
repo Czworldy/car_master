@@ -168,8 +168,10 @@ void GoLine(void)
 	speed = sqrt(speed_x * speed_x + speed_y * speed_y);
 	if (speed > Speed_Max)
 	{
-		speed_x *= Speed_Max / speed;
-		speed_y *= Speed_Max / speed;
+		speed_x = Speed_Max;
+		speed_y = Speed_Max;
+//		speed_x *= Speed_Max / speed;
+//		speed_y *= Speed_Max / speed;
 	}
 	
 	cos_temp = cos(GPS_List[0].radian);
@@ -190,8 +192,9 @@ void GoLine(void)
 //	LCD_printf(0,6+36*0,300,24,24,"1.Angle = %.6lf        ",GPS_List[0].angle);
 //	LCD_printf(0,6+36*1,300,24,24,"2.X = %.6lf        ",GPS_List[0].position.x);
 //	LCD_printf(0,6+36*2,300,24,24,"3.Y = %.6lf        ",GPS_List[0].position.y);
-//	LCD_printf(0,6+36*3,300,24,24,"4.speed_x = %.6lf        ",speed_x);
-//	LCD_printf(0,6+36*4,300,24,24,"5.speed_Y = %.6lf        ",speed_y);
+	LCD_printf(0,6+36*8,300,24,24,"4.Speed_X = %.6lf        ",Speed_X);
+	LCD_printf(0,6+36*9,300,24,24,"5.Speed_Y = %.6lf        ",Speed_Y);
+	
 //	
 //	if (Vout_A < 0)
 //		POINT_COLOR = RED;

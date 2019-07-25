@@ -62,6 +62,8 @@ extern struct Line_Point Product_Point_CCD_Middle_Offset[];
 extern struct Line_Point Product_Point_CCD_Leave_Offset;
 extern struct CCD_Line Product_Point_CCD_Line[];
 
+extern struct CCD_Line Center_Point_CCD_Line;
+
 void process_Show_QR_Code(u16 x,u16 y,u8 num);
 void process_Line_Point(struct Line_Point *aim_line_point);
 void process_Line(void);
@@ -80,5 +82,5 @@ void process_CCD_Auto_RGB(void);
 //void process_Calibration_BGR(void);
 //void process_Calibration(u8 process_type);
 void process_Point_Test(void);
-
+void process_My_CCD_Test(void);
 #endif

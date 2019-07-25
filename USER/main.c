@@ -2,7 +2,7 @@
 
 int main(void)
 {
-	u8 tp_last, key_value, is_key = 0;
+	static u8 is_key = 0;
 //	u8 is_raspberry_pi_ok = 0;
 	
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
@@ -18,7 +18,7 @@ int main(void)
 	GPS_USART_DMA_EN();
 	//Color_USART_DMA_EN();
 	
-	//TSL1401_Init();
+	TSL1401_Init();
 	
 	LCD_Init();           //初始化LCD FSMC接口
 	LCD_Scan_Dir(R2L_D2U);
@@ -30,9 +30,8 @@ int main(void)
 	
 	PID_Init();
 	
-	CANx_Init();
+	//CANx_Init();
 	//Servo_Original_Point_Bend();
-	
 	while(1)
 	{
 		
@@ -45,33 +44,11 @@ int main(void)
 //		{
 //			LCD_printf(0,6+36*4,300,24,24,"Raspberry Pi OK");
 //		}
-		#ifdef BSP_USING_TOUCH_SCREEN
-		tp_last = tp_dev.sta&TP_PRES_DOWN;
-		tp_dev.scan(0);
-		if ((tp_dev.sta&TP_PRES_DOWN) && !tp_last)
-		{
-			key_value = TP_MainMenu_Judge(tp_dev.x[0], tp_dev.y[0]);
-			if (key_value != keyempty1)
-				is_key = 1;
-		}
-		#endif
-		#ifdef BSP_USING_USART_KEY
-		#ifdef BSP_USING_TOUCH_SCREEN
-		else if (Is_USART_Key_Receive)
-		#else
-		if (Is_USART_Key_Receive)
-		#endif
-		{
-			Is_USART_Key_Receive = 0;
-			key_value = Key_RxBuffer[0];
-			if (key_value != keyempty1)
-				is_key = 1;
-		}
-		#endif
+		is_key =keyScan(MAINMENU);
 		if (is_key)
 		{
 			is_key = 0;
-			KeyNumOperate(key_value);
+			KeyNumOperate(keyValue);
 		}
 		else
 			delay_ms(1);	//没有按键按下的时候

@@ -35,6 +35,7 @@
 #include "M_Sys.h"
 #include "M_Route.h"
 #include "M_Process.h"
+#include "M_Game_Func.h"
 
 #include "goline.h"
 #include "keep.h"

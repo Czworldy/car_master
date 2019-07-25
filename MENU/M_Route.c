@@ -5,7 +5,7 @@ void route_Line(void)
 	u8 tp_last, key_value, is_key = 0;
 	u8 goline = 0;
 	double temp;
-	struct Line_Point aim_point = {{3000, 0}, pi/2, 300, 800, 300, 1, 2};
+	struct Line_Point aim_point = {{1500, 0}, pi/2, 200, 300, 50, 1, 2}; //{{3000, 0}, pi/2, 300, 800, 300, 1, 2}; 
 	
 	LCD_Clear(WHITE);
 	KeyBoard_State = 0;

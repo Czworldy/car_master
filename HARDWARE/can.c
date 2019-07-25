@@ -40,13 +40,13 @@ void Can_NVIC_Config(void)
 	NVIC_Init(&NVIC_InitStructure);
 #endif
 #if  USE_CAN2_R0
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x1;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x3;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x1;
 	NVIC_InitStructure.NVIC_IRQChannel = CAN2_RX0_IRQn;
 	NVIC_Init(&NVIC_InitStructure);
 #endif
 #if  USE_CAN2_R1
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x1;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x3;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x1;
 	NVIC_InitStructure.NVIC_IRQChannel = CAN2_RX1_IRQn;
 	NVIC_Init(&NVIC_InitStructure);
