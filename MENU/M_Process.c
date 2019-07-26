@@ -6433,21 +6433,21 @@ void process_CCD_Auto_RGB(void)
 }
 //offset 494.97
 struct Line_Point Task_1_Take_Point[4] = {
-	{{1344.97, 494.97}, 0, 40, 200, 40, -1, 2},
-	{{355.03, 494.97}, 0, 40, 200, 40, -1, 2},
-	{{355.03, -494.97}, 0, 40, 200, 40, -1, 2},
-	{{1344.97, -494.97}, 0, 40, 200, 40, -1, 2},
+	{{1344.97, 494.97}, 0, 40, 300, 40, -1, 2},
+	{{355.03, 494.97}, 0, 40, 300, 40, -1, 2},
+	{{355.03, -494.97}, 0, 40, 300, 40, -1, 2},
+	{{1344.97, -494.97}, 0, 40, 300, 40, -1, 2},
 };
 struct Line_Point Task_1_Take_Point_Offset[4] = {
-	{{494.97, 494.97}, 0, 40, 200, 40, -1, 2},
-	{{-494.97, 494.97}, 0, 40, 200, 40, -1, 2},
-	{{-494.97, -494.97}, 0, 40, 200, 40, -1, 2},
-	{{494.97, -494.97}, 0, 40, 200, 40, -1, 2},
+	{{494.97, 494.97}, 0, 40, 300, 40, -1, 2},
+	{{-494.97, 494.97}, 0, 40, 300, 40, -1, 2},
+	{{-494.97, -494.97}, 0, 40, 300, 40, -1, 2},
+	{{494.97, -494.97}, 0, 40, 300, 40, -1, 2},
 };
 struct Line_Point Center_Point =
-	{{850, 0}, 0, 40, 200, 40, -1, 2};
+	{{850, 0}, 0, 40, 300, 40, -1, 2};
 struct Line_Point Start_Point = 
-	{{0, 0}, 0, 40, 200, 40, -1, 2};
+	{{0, 0}, 0, 40, 300, 40, -1, 2};
 struct CCD_Line Center_Point_CCD_Line = 
 	{{0, 66, 0, 67}, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}};
 
@@ -6607,38 +6607,23 @@ void process_Point_Test(void)
 	delay_ms(1000);
 }
 
-void process_My_CCD_Test(void)
+void process_My_Test(void)
 {
 	u8 is_key = 0;	
 	
 	
 	Show_Keyboard();
-	TSL1401_SetEnabled(1);
+	Return_Any_Point(&Corner_Point[1-1],15.0,1.5);
+	CCD_Adjust_to_GPS(Corner_Point_CCD_Line[1-1],0,1,Corner_Point[1-1].aim_position);
+	delay_ms(1000);
+	Return_Any_Point(&Corner_Point[2-1],15.0,1.5);
+	CCD_Adjust_to_GPS(Corner_Point_CCD_Line[2-1],0,2,Corner_Point[2-1].aim_position);
+	delay_ms(1000);
+	Return_Any_Point(&Corner_Point[3-1],15.0,1.5);
+	CCD_Adjust_to_GPS(Corner_Point_CCD_Line[3-1],3,2,Corner_Point[3-1].aim_position);
+	delay_ms(1000);
+	Return_Any_Point(&Corner_Point[4-1],15.0,1.5);
+	CCD_Adjust_to_GPS(Corner_Point_CCD_Line[4-1],3,1,Corner_Point[4-1].aim_position);
 	
-	delay_ms(500);
-	while (!TSL1401_Cal_Ready);
-	TSL1401_Measure(!TSL1401_Is_Find_ADC_Threshold);
-	
-	while (1)
-	{
-		LCD_printf(0,6+36*1,300,24,24,"Press any key to start 1");
-		LCD_printf(0,6+36*2,300,24,24,"Edge Type:%u %u %u %u",TSL1401_State[0].Line_Edge_Type,TSL1401_State[1].Line_Edge_Type,TSL1401_State[2].Line_Edge_Type,TSL1401_State[3].Line_Edge_Type);
-		LCD_printf(0,6+36*3,300,24,24,"Mpos:%u %u %u %u",TSL1401_State[0].Line_Edge_Median_Pos,TSL1401_State[1].Line_Edge_Median_Pos,TSL1401_State[2].Line_Edge_Median_Pos,TSL1401_State[3].Line_Edge_Median_Pos);
-		
-		is_key = keyScan(1);
-		if (is_key)
-		{
-			is_key = 0;
-			switch(keyValue)
-			{
-				case keyback:
-					TSL1401_SetEnabled(0);
-					return;
-				default:
-					break;
-			}
-		}
-		else
-			delay_ms(1);
-	}
+	delay_ms(1000); 
 }

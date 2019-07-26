@@ -1,12 +1,16 @@
 #include "ccd.h"
 #include <math.h>
 #include <stdlib.h>
-
+/*
+		back 1
+right 3			front 0
+		left 2
+*/
 struct CCD_State TSL1401_State[TSL1401_ADC_Channel_Size]  = {
-	{140.0/80.0, 3680, 1385, 3},	//Front
-	{100.0/102.0, 3897, 661, 1},	//Back
-	{140.0/80.0, 3633, 1538, 0},	//Left
-	{100.0/102.0, 3687, 1360, 2},	//Right
+	{-100.0/89.0, 2353, 1450, 3},	//Front
+	{-100.0/95.0, 3012, 900, 1},	//Back
+	{100.0/86.0, 3037, 881, 0},	//Left
+	{100.0/102.0, 2419, 1392, 2},	//Right
 //	{140.0/80.0, 1000, 1700, 3},	//Front
 //	{100.0/102.0, 950, 1900, 1},	//Back
 //	{140.0/80.0, 1400, 2000, 0},	//Left
@@ -438,11 +442,11 @@ void TSL1401_Edge_Detect(void)	//对应方向:0:成功,1:检测到全都为线,2:检测到全都为
 				}
 			}
 		}
-		ptr->Line_Edge_Distance = ptr->Line_Edge_Left_Pos + ptr->Line_Edge_Right_Pos;
-		ptr->Line_Edge_Median_Pos = ptr->Line_Edge_Distance / 2;
-		if(ptr->Line_Edge_Distance > 40)
-			ptr->Line_Edge_Type = 4;
-		else
+		ptr->Line_Edge_Distance = abs(ptr->Line_Edge_Left_Pos - ptr->Line_Edge_Right_Pos);
+		ptr->Line_Edge_Median_Pos = (ptr->Line_Edge_Left_Pos + ptr->Line_Edge_Right_Pos) / 2;
+//		if(ptr->Line_Edge_Distance > 40)
+//			ptr->Line_Edge_Type = 4;
+//		else
 			ptr->Line_Edge_Type = 0;
 	}
 }

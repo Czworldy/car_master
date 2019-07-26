@@ -9,7 +9,7 @@ int main(void)
 	delay_init(168);
 	LED_Init();
 	EXTIX_Init();
-	PWM_Init();
+	PWM_Init();  //wheels
 	//TIM12_Int_Init(10000-1, 8400-1);
 	USART_Config();
 	
@@ -30,7 +30,7 @@ int main(void)
 	
 	PID_Init();
 	
-	//CANx_Init();
+	CANx_Init();
 	//Servo_Original_Point_Bend();
 	while(1)
 	{

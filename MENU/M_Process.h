@@ -82,5 +82,5 @@ void process_CCD_Auto_RGB(void);
 //void process_Calibration_BGR(void);
 //void process_Calibration(u8 process_type);
 void process_Point_Test(void);
-void process_My_CCD_Test(void);
+void process_My_Test(void);
 #endif
