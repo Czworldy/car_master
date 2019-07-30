@@ -10,6 +10,11 @@
 #define TSL1401_ADC_Channel_Size 4
 #define TSL1401_ADC_Buffer_Size 128
 
+#define Front 0
+#define Back 1
+#define Left 2
+#define Right 3
+
 extern struct CCD_State TSL1401_State[];
 
 extern uint8_t TSL1401_Mode;

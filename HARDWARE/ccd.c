@@ -1,16 +1,12 @@
 #include "ccd.h"
 #include <math.h>
 #include <stdlib.h>
-/*
-		back 1
-right 3			front 0
-		left 2
-*/
+
 struct CCD_State TSL1401_State[TSL1401_ADC_Channel_Size]  = {
-	{-100.0/89.0, 2353, 1450, 3},	//Front
-	{-100.0/95.0, 3012, 900, 1},	//Back
-	{100.0/86.0, 3037, 881, 0},	//Left
-	{100.0/102.0, 2419, 1392, 2},	//Right
+	{60.0/77.0, 2179, 1594, 0},	//Front
+	{-60.0/82.0, 3209, 738, 2},	//Back
+	{100.0/86.0, 2181, 1594, 3},	//Left              done
+	{-100.0/97.0, 1671, 2016, 1},	//Right
 //	{140.0/80.0, 1000, 1700, 3},	//Front
 //	{100.0/102.0, 950, 1900, 1},	//Back
 //	{140.0/80.0, 1400, 2000, 0},	//Left
@@ -137,7 +133,7 @@ void TSL1401_TIM_Init(void)
 	
 	TIM_TimeBaseInitStructure.TIM_Prescaler = 0;  //定时器分频
 	TIM_TimeBaseInitStructure.TIM_CounterMode = TIM_CounterMode_Up; //向上计数模式
-	TIM_TimeBaseInitStructure.TIM_Period = 1680 - 1;//4200-1;//14700-1;//4200-1;//16800-1;	//1680-1;   //自动重装载值
+	TIM_TimeBaseInitStructure.TIM_Period = 1000 - 1;//4200-1;//14700-1;//4200-1;//16800-1;	//1680-1;   //自动重装载值
 	TIM_TimeBaseInitStructure.TIM_ClockDivision = TIM_CKD_DIV1; 
 	
 	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseInitStructure);
@@ -442,11 +438,15 @@ void TSL1401_Edge_Detect(void)	//对应方向:0:成功,1:检测到全都为线,2:检测到全都为
 				}
 			}
 		}
+		
 		ptr->Line_Edge_Distance = abs(ptr->Line_Edge_Left_Pos - ptr->Line_Edge_Right_Pos);
 		ptr->Line_Edge_Median_Pos = (ptr->Line_Edge_Left_Pos + ptr->Line_Edge_Right_Pos) / 2;
-//		if(ptr->Line_Edge_Distance > 40)
-//			ptr->Line_Edge_Type = 4;
-//		else
+		
+		if(ptr->Line_Edge_Distance > 40
+			 && ptr->Line_Edge_Type != 1
+				&& ptr->Line_Edge_Type != 2)
+			ptr->Line_Edge_Type = 4;
+		else
 			ptr->Line_Edge_Type = 0;
 	}
 }

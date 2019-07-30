@@ -560,7 +560,7 @@ void sys_Servo(void)
 	POINT_COLOR=BLACK;
 	for (i = 0; i < 4; ++i)
 	{
-		LCD_printf(0,6+36*2*i,300,24,24,"%d.Servo%d Duty = %u",i+1,i+1,Servo_Duty[i]);
+		LCD_printf(0,6+36*2*i,300,24,24,"%d.Servo%d loc = %u",i+1,i+1,set_loc[i]);
 	}
 	for (i = 0; i < 4; ++i)
 	{
@@ -611,16 +611,16 @@ void sys_Servo(void)
 			{
 				case key1:
 					Input_DoubleValue(&pwm_duty[0],"Servo1");
-					if (pwm_duty[0] <= 50)
-						Servo_Duty[0] = pwm_duty[0];
+					if (pwm_duty[0] <= 400000)
+						set_loc[0] = pwm_duty[0];
 					break;
 				case key2:
 					if (tp_dev.x[0] < 300)
 					{
 						touch_pos[0] = tp_dev.x[0];
-						pwm_duty[0] = tp_dev.x[0]*(50.0-10.0)/300.0+10.0;
-						if (pwm_duty[0] <= 50)
-							Servo_Duty[0] = pwm_duty[0];
+						pwm_duty[0] = tp_dev.x[0]*400000.0/300.0;
+						if (pwm_duty[0] <= 400000)
+							set_loc[0] = pwm_duty[0];
 					}
 					break;
 				case key3:
@@ -681,7 +681,7 @@ void sys_Servo(void)
 			POINT_COLOR=BLACK;
 			for (i = 0; i < 4; ++i)
 			{
-				LCD_printf(0,6+36*2*i,300,24,24,"%d.Servo%d Duty = %u",i+1,i+1,Servo_Duty[i]);
+				LCD_printf(0,6+36*2*i,300,24,24,"%d.Servo%d loc = %u",i+1,i+1,set_loc[i]);
 			}
 			for (i = 0; i < 4; ++i)
 			{
@@ -849,7 +849,7 @@ void sys_Camera(void)
 
 void sys_PanTilt(void)
 {
-	u8 i, tp_last, key_value, is_key = 0;
+	u8 tp_last, key_value, is_key = 0;
 	int64_t angle = 0;
 	int32_t length = 0;
 
@@ -937,8 +937,10 @@ void sys_PanTilt(void)
 					set_spd[1] = 0;
 					return;
 				case key9:
+					Input_IntValue(&length,"length");
+					set_loc[0] = length;
 					PID_struct_init(&pid_spd[1], POSITION_PID, 30000, 30000,
-								SP,	SI,	SD	);  //4 motos angular rate closeloop.  0.80f,	0.03f,	0.0015f	(超调)
+						 		SP,	SI,	SD	);  //4 motos angular rate closeloop.  0.80f,	0.03f,	0.0015f	(超调)
 					PID_struct_init(&pid_loc[1], DELTA_PID, 200, 200,
 								DP,	DI,	DD	);  //0.80f,	0.003f,	0.000f	);  //4 motos angular location closeloop.}
 					break;
@@ -953,9 +955,52 @@ void sys_PanTilt(void)
 			LCD_printf(0,6+36*5,300,24,24,"6.SP:%f",SP);
 			LCD_printf(0,6+36*6,300,24,24,"7.SI:%f",SI);
 			LCD_printf(0,6+36*7,300,24,24,"8.SD:%f",SD);
-			LCD_printf(0,6+36*8,300,24,24,"9.GO",Mode[1]);
+			LCD_printf(0,6+36*8,300,24,24,"9.GO");
 		}
 		else
 			delay_ms(1);
+	}
+}
+
+void sys_Measure(void)
+{
+	u8 is_key = 0;
+	
+	LCD_Clear(WHITE);
+	KeyBoard_State = 0;
+	Show_Keyboard();
+	
+	Motor_Set_Enabled(0);
+	
+	PID_struct_init(&pid_spd[0], DELTA_PID, 8000, 16384,
+								0.0f,	0.0f,	0.0f	);  //4 motos angular rate closeloop.  0.80f,	0.03f,	0.0015f	(超调)
+	PID_struct_init(&pid_loc[0], DELTA_PID, 9600, 9600,
+								0.0f,	0.0f,	0.0f	);  //4 motos angular location closeloop.}
+	PID_struct_init(&pid_spd[1], DELTA_PID, 30000, 30000,
+								0.0f,	0.0f,	0.0f	);  //4 motos angular rate closeloop.  0.80f,	0.03f,	0.0015f	(超调)
+	PID_struct_init(&pid_loc[1], DELTA_PID, 50, 50,
+								0.0f,	0.0f,	0.0f	);  //0.80f,	0.003f,	0.000f	);  //4 motos angular location closeloop.}
+
+	while(1)
+	{
+		LCD_printf(0,6+36*0,300,24,24,"1.loc[0]=lld%		",moto_chassis[0].total_angle);
+		LCD_printf(0,6+36*1,300,24,24,"2.loc[1]=lld%		",moto_chassis[1].total_angle);
+		LCD_printf(0,6+36*2,300,24,24,"Angle = %lf        ",GPS_List[0].angle);
+		LCD_printf(0,6+36*3,300,24,24,"X = %lf        ",GPS_List[0].position.x);
+		LCD_printf(0,6+36*4,300,24,24,"Y = %lf        ",GPS_List[0].position.y);
+		
+		is_key = keyScan(MAINMENU);
+		
+		switch(keyValue)
+		{
+			case keyback:
+				Motor_Set_Enabled(0);
+				
+				PID_Init();
+				return;
+			default:
+				break;
+		}
+			
 	}
 }

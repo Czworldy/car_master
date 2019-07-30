@@ -18,8 +18,8 @@ __align(32) volatile u8 WIFI_RxBuffer[WIFI_RxBufferSize] = {0};
 u8 QR_Code_TxBuffer[QR_Code_TxBufferSize] = {0x7E, 0x00, 0x08, 0x01, 0x00, 0x02, 0x01, 0xAB, 0xCD};
 __align(32) volatile u8 GPS_RxBuffer[GPS_RxBufferSize] = {0};
 __align(32) u8 GPS_TxBuffer[GPS_TxBufferSize] = {0};
-__align(32) u8 PanTilt_TxBuffer[PanTilt_TxBufferSize] = {0};
-__align(32) volatile u8 PanTilt_RxBuffer[PanTilt_RxBufferSize] = {0};
+//__align(32) u8 PanTilt_TxBuffer[PanTilt_TxBufferSize] = {0};
+//__align(32) volatile u8 PanTilt_RxBuffer[PanTilt_RxBufferSize] = {0};
 
 u8 WIFI_RxBuffer_Idx = 0;
 

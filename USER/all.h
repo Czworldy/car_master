@@ -44,4 +44,6 @@
 #include "mymath.h"
 #include "arm_math.h"
 
+#define PanTilt_Zero 1500
+
 #endif

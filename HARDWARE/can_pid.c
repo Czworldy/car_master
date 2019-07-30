@@ -171,6 +171,8 @@ void get_moto_chassis(int i)
 		moto_chassis[i].temperature = (uint8_t) Motor2Stm[i].u8_data[6];
 }
 
+int error = 0;
+
 void PID_DJI_Handler(int i)
 {
 	float pid_out;
@@ -178,13 +180,34 @@ void PID_DJI_Handler(int i)
 	get_moto_chassis(i);
 	get_total_angle(&moto_chassis[i]);
 	if(Mode[i] == Speed_Mode)
-	{	
+	{			
 		pid_out = PID_DJI(&pid_spd[i], moto_chassis[i].speed_rpm, set_spd[i]);
+		if(i == 1)
+		{
+			error = moto_chassis[i].total_angle - set_loc[i];
+			if( abs(error) <= 100 )
+			{	
+				Mode[1] = Location_Mode;
+				set_spd[1] = 0;
+			}
+		}
 	}
 	else if(Mode[i] == Location_Mode)
 	{
-			pid_out = PID_DJI(&pid_loc[i], moto_chassis[i].total_angle, set_loc[i]);
-			pid_out = PID_DJI(&pid_spd[i], moto_chassis[i].speed_rpm, pid_out);
+		if(i == 1)
+		{
+			error = moto_chassis[i].total_angle - set_loc[i];
+			if(abs(error) >= 100) //抓手电机 
+			{	
+				Mode[1] = Speed_Mode;
+				if(error < 0)
+					set_spd[1] = 75;
+				else if(error > 0)
+					set_spd[1] = -75;
+			}
+		}	
+		pid_out = PID_DJI(&pid_loc[i], moto_chassis[i].total_angle, set_loc[i]);
+		pid_out = PID_DJI(&pid_spd[i], moto_chassis[i].speed_rpm, pid_out);
 	}
 	if(i == 0)
 		set_moto_current(pid_out,0,0,0);
@@ -198,7 +221,8 @@ void PID_03(void){}
 void PID_04(void){}
 
 void PID_Init(void)
-{	PID_struct_init(&pid_spd[0], DELTA_PID, 8000, 16384,
+{	
+	PID_struct_init(&pid_spd[0], DELTA_PID, 8000, 16384,
 								24.0f,	1.2f,	0.02f	);  //4 motos angular rate closeloop.  0.80f,	0.03f,	0.0015f	(超调)
 	PID_struct_init(&pid_loc[0], DELTA_PID, 9600, 9600,
 								0.80f,	0.003f,	0.000f	);  //4 motos angular location closeloop.}

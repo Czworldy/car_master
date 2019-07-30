@@ -9,10 +9,10 @@ double Speed_Y = 0;				// mm/s
 double Speed_Rotation = 0;		// (rad/s)/100
 double RPM_Limit = 500; //3000
 
-struct Mecanum_State Mec_FL = {2, -1};
-struct Mecanum_State Mec_FR = {1, -1};
-struct Mecanum_State Mec_BL = {3, -1};
-struct Mecanum_State Mec_BR = {4, -1};
+struct Mecanum_State Mec_FL = {3, -1};
+struct Mecanum_State Mec_FR = {4, -1};
+struct Mecanum_State Mec_BL = {2, -1};
+struct Mecanum_State Mec_BR = {1, -1};
 
 double Mec_wheel_r_FL = 28.0;
 double Mec_wheel_r_FR = 28.0;

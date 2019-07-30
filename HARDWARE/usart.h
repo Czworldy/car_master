@@ -15,8 +15,8 @@
 #define GPS_RxBufferSize 20
 #define GPS_TxBufferSize 9
 #define WIFI_RxBufferSize 7
-#define PanTilt_TxBufferSize 18
-#define PanTilt_RxBufferSize 8
+//#define PanTilt_TxBufferSize 18
+//#define PanTilt_RxBufferSize 8
 
 #define Print_USART USART1
 
@@ -44,7 +44,7 @@
 #endif
 
 #ifdef BSP_USING_USART6
-	#define BSP_USING_USART6_DMA
+//	#define BSP_USING_USART6_DMA
 #endif
 
 #if ((defined BSP_USING_USART1) && (!defined BSP_USING_USART1_DMA))

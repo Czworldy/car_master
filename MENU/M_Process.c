@@ -76,7 +76,7 @@ struct Line_Point Product_Point_Offset_Fast[3] = {
 	{{0,  300}, 0, 50, 1000, 50, -1, 2},
 };//R G B
 
-struct Line_Point CCD_Adjustment = {{0, 0}, 0, 30, 40, 30, -1, 4};//{{0, 0}, 0, 30, 50, 30, -1, 4};
+struct Line_Point CCD_Adjustment = {{0, 0}, 0, 30, 50, 10, -1, 4};//{{0, 0}, 0, 30, 50, 30, -1, 4};
 
 struct Line_Point Stock_Point_CCD_Middle_Slow = {{1430, 2320}, 0, 50, 200, 50, 1, 2};
 struct Line_Point Stock_Point_CCD_Middle_Fast = {{1430, 2320}, 0, 50, 1200, 50, 1, 2};
@@ -6433,23 +6433,23 @@ void process_CCD_Auto_RGB(void)
 }
 //offset 494.97
 struct Line_Point Task_1_Take_Point[4] = {
-	{{1344.97, 494.97}, 0, 40, 300, 40, -1, 2},
-	{{355.03, 494.97}, 0, 40, 300, 40, -1, 2},
-	{{355.03, -494.97}, 0, 40, 300, 40, -1, 2},
-	{{1344.97, -494.97}, 0, 40, 300, 40, -1, 2},
+	{{-494.97, 1194.97}, 0, 40, 300, 40, -1, 2},
+	{{-494.97, 205.03}, 0, 40, 300, 40, -1, 2},
+	{{494.97, 205.03}, 0, 40, 300, 40, -1, 2},
+	{{494.97, 1194.97}, 0, 40, 300, 40, -1, 2},
 };
 struct Line_Point Task_1_Take_Point_Offset[4] = {
-	{{494.97, 494.97}, 0, 40, 300, 40, -1, 2},
-	{{-494.97, 494.97}, 0, 40, 300, 40, -1, 2},
+	{{-345, 345}, 0, 40, 300, 40, -1, 2},
 	{{-494.97, -494.97}, 0, 40, 300, 40, -1, 2},
-	{{494.97, -494.97}, 0, 40, 300, 40, -1, 2},
+	{{494.97, -494.97}, 0, 40, 300, 4  0, -1, 2},
+	{{494.97, 494.97}, 0, 40, 300, 40, -1, 2},
 };
 struct Line_Point Center_Point =
-	{{850, 0}, 0, 40, 300, 40, -1, 2};
+	{{0, 700}, 0, 40, 300, 40, -1, 2};
 struct Line_Point Start_Point = 
 	{{0, 0}, 0, 40, 300, 40, -1, 2};
 struct CCD_Line Center_Point_CCD_Line = 
-	{{0, 66, 0, 67}, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}};
+	{{64, 64, 64, 64 }, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}};
 
 /*
 void Return_Center(void)
@@ -6537,10 +6537,10 @@ void process_Point_Test(void)
 			delay_ms(1);
 	}
 	Show_Keyboard();
-	Return_Any_Point(&Center_Point,20,2);  // Center Point
+	Return_Any_Point(&Center_Point,10.0,1.0);  // Center Point
 	delay_ms(1000);
 	
-	CCD_Adjust(Center_Point_CCD_Line,3,1);
+	CCD_Adjust_to_GPS(Center_Point_CCD_Line,Front,Left,Center_Point.aim_position);
 //	Return_Any_Point(&Task_1_Take_Point[1-1],20,2);
 //	Return_Any_Point(&Center_Point,20,2);
 //	Return_Any_Point(&Task_1_Take_Point[2-1],20,2);
@@ -6564,7 +6564,7 @@ void process_Point_Test(void)
 	
 	delay_ms(1000);
 	
-	CCD_Adjust(Center_Point_CCD_Line,3,1);
+	CCD_Adjust_to_GPS(Center_Point_CCD_Line,Front,Left,Center_Point.aim_position);
 	delay_ms(1000);
 	
 	aim_line_point.aim_position.x = GPS_List[0].position.x + Task_1_Take_Point_Offset[2 - 1].aim_position.x;
@@ -6577,12 +6577,12 @@ void process_Point_Test(void)
 	aim_line_point.aim_position.y = GPS_List[0].position.y - Task_1_Take_Point_Offset[2 - 1].aim_position.y;
 	Return_Any_Point(&aim_line_point,15.0,1.5); //Center
 	
-	CCD_Adjust(Center_Point_CCD_Line,3,1);
+	CCD_Adjust_to_GPS(Center_Point_CCD_Line,Front,Left,Center_Point.aim_position);
 	delay_ms(1000);
 	
 	aim_line_point.aim_position.x = GPS_List[0].position.x + Task_1_Take_Point_Offset[3 - 1].aim_position.x;
 	aim_line_point.aim_position.y = GPS_List[0].position.y + Task_1_Take_Point_Offset[3 - 1].aim_position.y;
-	Return_Any_Point(&aim_line_point,15.0,1.5); //2
+	Return_Any_Point(&aim_line_point,15.0,1.5); //3
 	
 	delay_ms(1000);
 	
@@ -6590,12 +6590,12 @@ void process_Point_Test(void)
 	aim_line_point.aim_position.y = GPS_List[0].position.y - Task_1_Take_Point_Offset[3 - 1].aim_position.y;
 	Return_Any_Point(&aim_line_point,15.0,1.5); //Center
 	
-	CCD_Adjust(Center_Point_CCD_Line,3,1);
+	CCD_Adjust_to_GPS(Center_Point_CCD_Line,Front,Left,Center_Point.aim_position);
 	delay_ms(1000);
 	
 	aim_line_point.aim_position.x = GPS_List[0].position.x + Task_1_Take_Point_Offset[4 - 1].aim_position.x;
 	aim_line_point.aim_position.y = GPS_List[0].position.y + Task_1_Take_Point_Offset[4 - 1].aim_position.y;
-	Return_Any_Point(&aim_line_point,15.0,1.5); //2
+	Return_Any_Point(&aim_line_point,15.0,1.5); //4
 	
 	delay_ms(1000);
 	
@@ -6603,27 +6603,44 @@ void process_Point_Test(void)
 	aim_line_point.aim_position.y = GPS_List[0].position.y - Task_1_Take_Point_Offset[4 - 1].aim_position.y;
 	Return_Any_Point(&aim_line_point,15.0,1.5); //Center
 	  
-	CCD_Adjust(Center_Point_CCD_Line,3,1);
+	CCD_Adjust_to_GPS(Center_Point_CCD_Line,Front,Left,Center_Point.aim_position);
 	delay_ms(1000);
 }
 
 void process_My_Test(void)
 {
-	u8 is_key = 0;	
-	
+	struct Line_Point aim_line_point;
+//	u8 is_key = 0;	
 	
 	Show_Keyboard();
-	Return_Any_Point(&Corner_Point[1-1],15.0,1.5);
-	CCD_Adjust_to_GPS(Corner_Point_CCD_Line[1-1],0,1,Corner_Point[1-1].aim_position);
+	Return_Any_Point(&Center_Point,10.0,1.0);  // Center Point
 	delay_ms(1000);
-	Return_Any_Point(&Corner_Point[2-1],15.0,1.5);
-	CCD_Adjust_to_GPS(Corner_Point_CCD_Line[2-1],0,2,Corner_Point[2-1].aim_position);
-	delay_ms(1000);
-	Return_Any_Point(&Corner_Point[3-1],15.0,1.5);
-	CCD_Adjust_to_GPS(Corner_Point_CCD_Line[3-1],3,2,Corner_Point[3-1].aim_position);
-	delay_ms(1000);
-	Return_Any_Point(&Corner_Point[4-1],15.0,1.5);
-	CCD_Adjust_to_GPS(Corner_Point_CCD_Line[4-1],3,1,Corner_Point[4-1].aim_position);
 	
-	delay_ms(1000); 
+	CCD_Adjust_to_GPS(Center_Point_CCD_Line,Front,Left,Center_Point.aim_position);
+	
+	set_loc[0] = 400000;
+	set_loc[1] = PanTilt_Zero + 1024;
+	
+	aim_line_point = Task_1_Take_Point_Offset[1 - 1];
+	aim_line_point.aim_position.x = GPS_List[0].position.x + Task_1_Take_Point_Offset[1 - 1].aim_position.x;
+	aim_line_point.aim_position.y = GPS_List[0].position.y + Task_1_Take_Point_Offset[1 - 1].aim_position.y;
+	Return_Any_Point(&aim_line_point,10.0,1.0); //1
+	
+	delay_ms(1000);
+	
+	aim_line_point.aim_position.x = GPS_List[0].position.x - Task_1_Take_Point_Offset[1 - 1].aim_position.x;
+	aim_line_point.aim_position.y = GPS_List[0].position.y - Task_1_Take_Point_Offset[1 - 1].aim_position.y;
+	Return_Any_Point(&aim_line_point,10.0,1.0); //Center
+//	CCD_Adjust_to_GPS(Corner_Point_CCD_Line[1-1],0,1,Corner_Point[1-1].aim_position);
+//	delay_ms(1000);
+//	Return_Any_Point(&Corner_Point[2-1],15.0,1.5);
+//	CCD_Adjust_to_GPS(Corner_Point_CCD_Line[2-1],0,2,Corner_Point[2-1].aim_position);
+//	delay_ms(1000);
+//	Return_Any_Point(&Corner_Point[3-1],15.0,1.5);
+//	CCD_Adjust_to_GPS(Corner_Point_CCD_Line[3-1],3,2,Corner_Point[3-1].aim_position);
+//	delay_ms(1000);
+//	Return_Any_Point(&Corner_Point[4-1],15.0,1.5);
+//	CCD_Adjust_to_GPS(Corner_Point_CCD_Line[4-1],3,1,Corner_Point[4-1].aim_position);
+	
+//	delay_ms(1000); 
 }

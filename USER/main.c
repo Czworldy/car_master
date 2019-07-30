@@ -1,5 +1,6 @@
 #include "all.h"
 
+
 int main(void)
 {
 	static u8 is_key = 0;
@@ -31,6 +32,8 @@ int main(void)
 	PID_Init();
 	
 	CANx_Init();
+	
+	set_loc[1] = PanTilt_Zero;
 	//Servo_Original_Point_Bend();
 	while(1)
 	{

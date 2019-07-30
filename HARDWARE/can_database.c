@@ -6,7 +6,7 @@ union fi64_to_u8 CtrlCurrent;
 union fi64_to_u8 Motor2Stm[4];
 union fi64_to_u8 CtrlVoltage;
 
-//SLAVER--GPS
+//SLAVER--M3508 or M2006
 //新加ID时，在ID_NUMDEF中定义相应ID的意义
 /**/
 Can_Data Can_Database[]=
