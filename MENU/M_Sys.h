@@ -17,7 +17,7 @@ void sys_Servo(void);
 void sys_QR_Code(void);
 void sys_Camera(void);
 void sys_PanTilt(void);
-
+void sys_Measure(void);
 #endif 
 
 /**********************************END OF FILE*********************************/

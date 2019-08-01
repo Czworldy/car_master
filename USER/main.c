@@ -4,12 +4,12 @@
 int main(void)
 {
 	static u8 is_key = 0;
-//	u8 is_raspberry_pi_ok = 0;
+	u8 is_raspberry_pi_ok = 0;
 	
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
 	delay_init(168);
 	LED_Init();
-	EXTIX_Init();
+//	EXTIX_Init();
 	PWM_Init();  //wheels
 	//TIM12_Int_Init(10000-1, 8400-1);
 	USART_Config();
@@ -38,15 +38,15 @@ int main(void)
 	while(1)
 	{
 		
-//		if (Camera_RxBuffer[0] == 0xFF)
-//		{
-//			is_raspberry_pi_ok = 1;
-//			Camera_RxBuffer[0] = 0;
-//		}
-//		if (is_raspberry_pi_ok)
-//		{
-//			LCD_printf(0,6+36*4,300,24,24,"Raspberry Pi OK");
-//		}
+		if (Camera_RxBuffer[0] == 0xFF)
+		{
+			is_raspberry_pi_ok = 1;
+			Camera_RxBuffer[0] = 0;
+		}
+		if (is_raspberry_pi_ok)
+		{
+			LCD_printf(0,6+36*4,300,24,24,"Raspberry Pi OK");
+		}
 		is_key =keyScan(MAINMENU);
 		if (is_key)
 		{

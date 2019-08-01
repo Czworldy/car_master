@@ -45,5 +45,12 @@
 #include "arm_math.h"
 
 #define PanTilt_Zero 1500
+#define Grab     PEout(2)    
+#define Cylinder PEout(5)
+
+#define Cylin_Up 0
+#define Cylin_Down 1
+#define Grab_Open 1
+#define Grab_Close 0
 
 #endif

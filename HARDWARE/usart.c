@@ -829,67 +829,94 @@ void USART2_DMA_RX_IRQHandler(void)
 	}
 }
 #else
+
+//u8 color_cnt = 0;
+
 void USART2_IRQHandler(void)
 {
-	u8 temp[3] = {0};
-	u8 i;
 	
 	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET)
 	{
-		Camera_RxBuffer[3] = Camera_RxBuffer[2];
-		Camera_RxBuffer[2] = Camera_RxBuffer[1];
-		Camera_RxBuffer[1] = Camera_RxBuffer[0];
+//		Camera_RxBuffer[3] = Camera_RxBuffer[2];
+//		Camera_RxBuffer[2] = Camera_RxBuffer[1];
+//		Camera_RxBuffer[1] = Camera_RxBuffer[0];
 		Camera_RxBuffer[0] = USART2->DR;
 		
-		switch (Camera_Mode)
-		{
-			case 1:
-				temp[0] = (Camera_RxBuffer[0] >> 0) & 0x03;
-				temp[1] = (Camera_RxBuffer[0] >> 2) & 0x03;
-				temp[2] = (Camera_RxBuffer[0] >> 4) & 0x03;
-				if (Camera_RxBuffer[0] == Camera_RxBuffer[1] && 
-				    Camera_RxBuffer[1] == Camera_RxBuffer[2] &&
-				    Camera_RxBuffer[2] == Camera_RxBuffer[3] &&
-				    temp[0] >= 1 && temp[0] <= 3 && 
-				    temp[1] >= 1 && temp[1] <= 3 && 
-				    temp[2] >= 1 && temp[2] <= 3)
-				{
-					for (i = 0; i < 3; ++i)
-					{
-						Color_Res[i] = temp[i];
-						Color_Hash_Table[Color_Res[i]-1] = i + 1;
-					}
-					Is_Color_Finished = 1;
-					USART_SendByte(USART2, 0x00);
-				}
+		switch (Camera_RxBuffer[0])
+		{	
+			case 'b':
+				Color_Res[0] = 'b';
+				Is_Color_Finished = 1;
 				break;
-			case 2:
-				temp[0] = (Camera_RxBuffer[0] >> 0) & 0x03;
-				temp[1] = (Camera_RxBuffer[0] >> 2) & 0x03;
-				temp[2] = (Camera_RxBuffer[0] >> 4) & 0x03;
-				if (Camera_RxBuffer[0] == Camera_RxBuffer[1] && 
-				    Camera_RxBuffer[1] == Camera_RxBuffer[2] &&
-				    Camera_RxBuffer[2] == Camera_RxBuffer[3] &&
-				    temp[0] >= 1 && temp[0] <= 3 && 
-				    temp[1] >= 1 && temp[1] <= 3 && 
-				    temp[2] >= 1 && temp[2] <= 3)
-				{
-					for (i = 0; i < 3; ++i)
-					{
-						Color_Res[i] = temp[i];
-						Color_Hash_Table[Color_Res[i]-1] = i + 1;
-					}
-				}
+			case 'r':
+				Color_Res[0] = 'r';
+				Is_Color_Finished = 1;
 				break;
-			case 3:
-			case 4:
-			case 5:
-			case 6:
-				Product_Calibration_Sign = 1;
+			case 'g':
+				Color_Res[0] = 'g';
+				Is_Color_Finished = 1;
+				break;
+			case 'w':
+				Color_Res[0] = 'w';
+				Is_Color_Finished = 1;
+				break;
+			case 'k':
+				Color_Res[0] = 'k';
+				Is_Color_Finished = 1;
 				break;
 			default:
+				USART_SendByte(USART2,0x73);//s
 				break;
-		}
+		}	
+//		switch (Camera_Mode)
+//		{
+//			case 1:
+//				temp[0] = (Camera_RxBuffer[0] >> 0) & 0x03;
+//				temp[1] = (Camera_RxBuffer[0] >> 2) & 0x03;
+//				temp[2] = (Camera_RxBuffer[0] >> 4) & 0x03;
+//				if (Camera_RxBuffer[0] == Camera_RxBuffer[1] && 
+//				    Camera_RxBuffer[1] == Camera_RxBuffer[2] &&
+//				    Camera_RxBuffer[2] == Camera_RxBuffer[3] &&
+//				    temp[0] >= 1 && temp[0] <= 3 && 
+//				    temp[1] >= 1 && temp[1] <= 3 && 
+//				    temp[2] >= 1 && temp[2] <= 3)
+//				{
+//					for (i = 0; i < 3; ++i)
+//					{
+//						Color_Res[i] = temp[i];
+//						Color_Hash_Table[Color_Res[i]-1] = i + 1;
+//					}
+//					Is_Color_Finished = 1;
+//					USART_SendByte(USART2, 0x00);
+//				}
+//				break;
+//			case 2:
+//				temp[0] = (Camera_RxBuffer[0] >> 0) & 0x03;
+//				temp[1] = (Camera_RxBuffer[0] >> 2) & 0x03;
+//				temp[2] = (Camera_RxBuffer[0] >> 4) & 0x03;
+//				if (Camera_RxBuffer[0] == Camera_RxBuffer[1] && 
+//				    Camera_RxBuffer[1] == Camera_RxBuffer[2] &&
+//				    Camera_RxBuffer[2] == Camera_RxBuffer[3] &&
+//				    temp[0] >= 1 && temp[0] <= 3 && 
+//				    temp[1] >= 1 && temp[1] <= 3 && 
+//				    temp[2] >= 1 && temp[2] <= 3)
+//				{
+//					for (i = 0; i < 3; ++i)
+//					{
+//						Color_Res[i] = temp[i];
+//						Color_Hash_Table[Color_Res[i]-1] = i + 1;
+//					}
+//				}
+//				break;
+//			case 3:
+//			case 4:
+//			case 5:
+//			case 6:
+//				Product_Calibration_Sign = 1;
+//				break;
+//			default:
+//				break;
+//		}
 	}
 }
 #endif

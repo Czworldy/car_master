@@ -621,3 +621,96 @@ void CCD_Adjust_to_GPS_Y(struct CCD_Line ccd_line, uint8_t ccdy, struct Point st
 	 
 	Return_Any_Point(&aim_line_point,5.0,1.0);
 }
+
+u8 pos_Grab_cnt = 1;
+u8 black_mask = 0;
+
+struct Line_Point Color_Judge(void)
+{
+	struct Line_Point aim_line_point;
+	USART_SendByte(USART2,0x73);
+	
+	while(!Is_Color_Finished);
+	
+	switch(Color_Res[0])
+	{
+		case 'b':
+			aim_line_point = Task_1_Put_Point_Offset[1 - 1];
+			aim_line_point.aim_position.x = Center_Point.aim_position.x + Task_1_Put_Point_Offset[1 - 1].aim_position.x;
+			aim_line_point.aim_position.y = Center_Point.aim_position.y + Task_1_Put_Point_Offset[1 - 1].aim_position.y;
+			set_loc[1] = PanTilt_Zero + 1024*2 - 50; 
+			pos_Grab_cnt++;
+			Is_Color_Finished = 0;
+			break;
+		case 'g':
+			aim_line_point = Task_1_Put_Point_Offset[2 - 1];
+			aim_line_point.aim_position.x = Center_Point.aim_position.x + Task_1_Put_Point_Offset[2 - 1].aim_position.x;
+			aim_line_point.aim_position.y = Center_Point.aim_position.y + Task_1_Put_Point_Offset[2 - 1].aim_position.y;
+			set_loc[1] = PanTilt_Zero + 1024*4 - 50; 
+			pos_Grab_cnt++;
+			Is_Color_Finished = 0;
+			break;
+		case 'r':
+			aim_line_point = Task_1_Put_Point_Offset[3 - 1];
+			aim_line_point.aim_position.x = Center_Point.aim_position.x + Task_1_Put_Point_Offset[3 - 1].aim_position.x;
+			aim_line_point.aim_position.y = Center_Point.aim_position.y + Task_1_Put_Point_Offset[3 - 1].aim_position.y;
+			set_loc[1] = PanTilt_Zero - 1024*2 - 50; 
+			pos_Grab_cnt++;
+			Is_Color_Finished = 0;
+			break;
+		case 'w':
+			aim_line_point = Task_1_Put_Point_Offset[4 - 1];
+			aim_line_point.aim_position.x = Center_Point.aim_position.x + Task_1_Put_Point_Offset[4 - 1].aim_position.x;
+			aim_line_point.aim_position.y = Center_Point.aim_position.y + Task_1_Put_Point_Offset[4 - 1].aim_position.y;
+			set_loc[1] = PanTilt_Zero - 50; 
+			pos_Grab_cnt++;
+			Is_Color_Finished = 0;
+			break;
+		case 'k':
+			if(pos_Grab_cnt != 4)
+			{	
+				pos_Put();
+				black_mask = pos_Grab_cnt;
+				Is_Color_Finished = 0;
+				return Center_Point;
+			}
+			else if(pos_Grab_cnt == 4)
+			{
+				aim_line_point = Task_1_Put_Point_Offset[5 - 1];
+				aim_line_point.aim_position.x = Center_Point.aim_position.x + Task_1_Put_Point_Offset[5 - 1].aim_position.x;
+				aim_line_point.aim_position.y = Center_Point.aim_position.y + Task_1_Put_Point_Offset[5 - 1].aim_position.y;
+				set_loc[1] = PanTilt_Zero - 1024*3 - 50; 
+				set_loc[0] = 500000;
+				Is_Color_Finished = 0;
+			}
+		default:
+			break;
+	}
+	return aim_line_point;
+}
+
+void pos_Grab(void)
+{
+	delay_ms(1000);
+	Cylinder = Cylin_Down;
+	delay_ms(1000);
+	delay_ms(1000);
+	delay_ms(1500);
+	Grab = Grab_Open;
+	delay_ms(500);
+	Cylinder = Cylin_Up;
+	delay_ms(1000);
+}
+
+void pos_Put(void)
+{
+	Cylinder = Cylin_Down;
+	delay_ms(1500);
+	delay_ms(1500);
+	delay_ms(500); 
+	Grab = Grab_Close;
+	delay_ms(1000);
+	Cylinder = Cylin_Up;
+	delay_ms(1000);
+}
+

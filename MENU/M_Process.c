@@ -655,11 +655,11 @@ void process_Camera(void)
 	while (1)
 	{
 		LCD_printf(0,6+36*0,300,24,24,"1.Camera Enable(Be sure they are OK)");
-		LCD_printf(0,6+36*1,300,24,24,"2.Camera Disable");
+//		LCD_printf(0,6+36*1,300,24,24,"2.Camera Disable");
 		LCD_printf(0,6+36*2,300,24,24,"3.Mode:%u",Camera_Mode);
-		LCD_printf(0,6+36*3,300,24,24,"4.Rx:%u %u %u %u",Camera_RxBuffer[0],Camera_RxBuffer[1],Camera_RxBuffer[2],Camera_RxBuffer[3]);
-		LCD_printf(0,6+36*4,300,24,24,"5.Hash:r%u g%u b%u",Color_Hash_Table[0],Color_Hash_Table[1],Color_Hash_Table[2]);
-		LCD_printf(0,6+36*5,300,24,24,"6.Color Res:%u %u %u",Color_Res[0],Color_Res[1],Color_Res[2]);
+		LCD_printf(0,6+36*3,300,24,24,"4.Rx:%u 		",Camera_RxBuffer[0]);
+//		LCD_printf(0,6+36*4,300,24,24,"5.Hash:r%u g%u b%u",Color_Hash_Table[0],Color_Hash_Table[1],Color_Hash_Table[2]);
+		LCD_printf(0,6+36*5,300,24,24,"6.Color Res:%s 	",Color_Res[0]);
 		LCD_printf(0,6+36*6,300,24,24,"7.Power off");
 		
 		#ifdef BSP_USING_TOUCH_SCREEN
@@ -691,17 +691,19 @@ void process_Camera(void)
 			switch(key_value)
 			{
 				case key1:
-					Camera_Set_Mode(8);
+					//Camera_Set_Mode(8);
+					USART_SendByte(USART2,0x73);
 					break;
 				case key2:
-					Camera_Set_Mode(0);
+					//Camera_Set_Mode(0);
 					break;
 				case key3:
 					Input_IntValue(&camera_mode, "Mode");
 					Camera_Set_Mode(camera_mode);
 					break;
 				case key7:
-					Camera_Set_Mode(7);
+					USART_SendByte(USART2,0x6F);//o
+					//Camera_Set_Mode(7);
 					break;
 				case keyback:
 					return;
@@ -709,11 +711,11 @@ void process_Camera(void)
 					KeyBoard_State = !KeyBoard_State;
 					Show_Keyboard();
 					LCD_printf(0,6+36*0,300,24,24,"1.Camera Enable(Be sure they are OK)");
-					LCD_printf(0,6+36*1,300,24,24,"2.Camera Disable");
+					//LCD_printf(0,6+36*1,300,24,24,"2.Camera Disable");
 					LCD_printf(0,6+36*2,300,24,24,"3.Mode:%u",Camera_Mode);
-					LCD_printf(0,6+36*3,300,24,24,"4.Rx:%u %u %u %u",Camera_RxBuffer[0],Camera_RxBuffer[1],Camera_RxBuffer[2],Camera_RxBuffer[3]);
-					LCD_printf(0,6+36*4,300,24,24,"5.Hash:r%u g%u b%u",Color_Hash_Table[0],Color_Hash_Table[1],Color_Hash_Table[2]);
-					LCD_printf(0,6+36*5,300,24,24,"6.Color Res:%u %u %u",Color_Res[0],Color_Res[1],Color_Res[2]);
+					LCD_printf(0,6+36*3,300,24,24,"4.Rx:%u 		",Camera_RxBuffer[0]);
+					//LCD_printf(0,6+36*4,300,24,24,"5.Hash:r%u g%u b%u",Color_Hash_Table[0],Color_Hash_Table[1],Color_Hash_Table[2]);
+					LCD_printf(0,6+36*5,300,24,24,"6.Color Res:%s 	",Color_Res[0]);
 					LCD_printf(0,6+36*6,300,24,24,"7.Power off");
 					break;
 				default:
@@ -6440,9 +6442,16 @@ struct Line_Point Task_1_Take_Point[4] = {
 };
 struct Line_Point Task_1_Take_Point_Offset[4] = {
 	{{-345, 345}, 0, 40, 300, 40, -1, 2},
-	{{-494.97, -494.97}, 0, 40, 300, 40, -1, 2},
-	{{494.97, -494.97}, 0, 40, 300, 4  0, -1, 2},
-	{{494.97, 494.97}, 0, 40, 300, 40, -1, 2},
+	{{-345, -345}, 0, 40, 300, 40, -1, 2},
+	{{345, -345}, 0, 40, 300, 40, -1, 2},
+	{{345, 345}, 0, 40, 300, 40, -1, 2},
+};
+struct Line_Point Task_1_Put_Point_Offset[5] = {
+	{{-167, 0}, 0, 40, 100, 40, -1, 2}, //blue
+	{{0, -167}, 0, 40, 100, 40, -1, 2},//green
+	{{167, 0}, 0, 40, 100, 40, -1, 2},//red
+	{{0, 167}, 0, 40, 100, 40, -1, 2},//white
+	{{167, 167}, 0, 40, 100, 40, -1, 2}
 };
 struct Line_Point Center_Point =
 	{{0, 700}, 0, 40, 300, 40, -1, 2};
@@ -6609,7 +6618,7 @@ void process_Point_Test(void)
 
 void process_My_Test(void)
 {
-	struct Line_Point aim_line_point;
+	struct Line_Point aim_line_point,put_line_point;
 //	u8 is_key = 0;	
 	
 	Show_Keyboard();
@@ -6617,7 +6626,9 @@ void process_My_Test(void)
 	delay_ms(1000);
 	
 	CCD_Adjust_to_GPS(Center_Point_CCD_Line,Front,Left,Center_Point.aim_position);
-	
+	delay_ms(1000);
+	while(1)
+	{
 	set_loc[0] = 400000;
 	set_loc[1] = PanTilt_Zero + 1024;
 	
@@ -6626,11 +6637,98 @@ void process_My_Test(void)
 	aim_line_point.aim_position.y = GPS_List[0].position.y + Task_1_Take_Point_Offset[1 - 1].aim_position.y;
 	Return_Any_Point(&aim_line_point,10.0,1.0); //1
 	
-	delay_ms(1000);
+	pos_Grab();
+	
+	put_line_point = Color_Judge();
 	
 	aim_line_point.aim_position.x = GPS_List[0].position.x - Task_1_Take_Point_Offset[1 - 1].aim_position.x;
 	aim_line_point.aim_position.y = GPS_List[0].position.y - Task_1_Take_Point_Offset[1 - 1].aim_position.y;
 	Return_Any_Point(&aim_line_point,10.0,1.0); //Center
+	
+	CCD_Adjust_to_GPS(Center_Point_CCD_Line,Front,Left,Center_Point.aim_position);
+	
+	Return_Any_Point(&put_line_point,5.0,1.0);
+	delay_ms(500);
+	pos_Put();
+	
+	Return_Any_Point(&Center_Point,10.0,1.0);
+	CCD_Adjust_to_GPS(Center_Point_CCD_Line,Front,Left,Center_Point.aim_position);
+	}
+	
+//	set_loc[1] = PanTilt_Zero - 1024*2 - 100; 
+//	
+//	aim_line_point = Task_1_Put_Point_Offset[3 - 1];
+//	aim_line_point.aim_position.x = GPS_List[0].position.x + Task_1_Put_Point_Offset[3 - 1].aim_position.x;
+//	aim_line_point.aim_position.y = GPS_List[0].position.y + Task_1_Put_Point_Offset[3 - 1].aim_position.y;
+//	Return_Any_Point(&aim_line_point,5.0,1.0); //red
+//	
+//	pos_Put();
+//	
+//	aim_line_point = Task_1_Put_Point_Offset[3 - 1];
+//	aim_line_point.aim_position.x = GPS_List[0].position.x - Task_1_Put_Point_Offset[3 - 1].aim_position.x;
+//	aim_line_point.aim_position.y = GPS_List[0].position.y - Task_1_Put_Point_Offset[3 - 1].aim_position.y;
+//	Return_Any_Point(&aim_line_point,10.0,1.0);
+//	CCD_Adjust_to_GPS(Center_Point_CCD_Line,Front,Left,Center_Point.aim_position);
+
+/*	set_loc[0] = 400000;
+	set_loc[1] = PanTilt_Zero + 1024*3;
+	
+	aim_line_point = Task_1_Take_Point_Offset[2 - 1];
+	aim_line_point.aim_position.x = GPS_List[0].position.x + Task_1_Take_Point_Offset[2 - 1].aim_position.x;
+	aim_line_point.aim_position.y = GPS_List[0].position.y + Task_1_Take_Point_Offset[2 - 1].aim_position.y;
+	Return_Any_Point(&aim_line_point,10.0,1.0); //2
+	
+	delay_ms(1000); 
+	
+	Cylinder = Cylin_Down;
+	delay_ms(1500);
+	delay_ms(1500);
+	Grab = Grab_Close;
+	delay_ms(1000);
+	Cylinder = Cylin_Up;
+	delay_ms(1000);
+
+	aim_line_point.aim_position.x = GPS_List[0].position.x - Task_1_Take_Point_Offset[2 - 1].aim_position.x;
+	aim_line_point.aim_position.y = GPS_List[0].position.y - Task_1_Take_Point_Offset[2 - 1].aim_position.y;
+	Return_Any_Point(&aim_line_point,10.0,1.0); //Center
+	
+	CCD_Adjust_to_GPS(Center_Point_CCD_Line,Front,Left,Center_Point.aim_position);
+	delay_ms(1000);
+	
+	set_loc[0] = 400000;
+	set_loc[1] = PanTilt_Zero + 1024*5;
+	
+	aim_line_point = Task_1_Take_Point_Offset[3 - 1];
+	aim_line_point.aim_position.x = GPS_List[0].position.x + Task_1_Take_Point_Offset[3 - 1].aim_position.x;
+	aim_line_point.aim_position.y = GPS_List[0].position.y + Task_1_Take_Point_Offset[3 - 1].aim_position.y;
+	Return_Any_Point(&aim_line_point,10.0,1.0); //3
+	
+	delay_ms(1000);
+	
+	aim_line_point.aim_position.x = GPS_List[0].position.x - Task_1_Take_Point_Offset[3 - 1].aim_position.x;
+	aim_line_point.aim_position.y = GPS_List[0].position.y - Task_1_Take_Point_Offset[3 - 1].aim_position.y;
+	Return_Any_Point(&aim_line_point,10.0,1.0); //Center
+	
+	CCD_Adjust_to_GPS(Center_Point_CCD_Line,Front,Left,Center_Point.aim_position);
+	delay_ms(1000);
+	
+	set_loc[0] = 400000;
+	set_loc[1] = PanTilt_Zero + 1024*7;
+	
+	aim_line_point = Task_1_Take_Point_Offset[4 - 1];
+	aim_line_point.aim_position.x = GPS_List[0].position.x + Task_1_Take_Point_Offset[4 - 1].aim_position.x;
+	aim_line_point.aim_position.y = GPS_List[0].position.y + Task_1_Take_Point_Offset[4 - 1].aim_position.y;
+	Return_Any_Point(&aim_line_point,10.0,1.0); //4
+	
+	delay_ms(1000);
+	
+	aim_line_point.aim_position.x = GPS_List[0].position.x - Task_1_Take_Point_Offset[4 - 1].aim_position.x;
+	aim_line_point.aim_position.y = GPS_List[0].position.y - Task_1_Take_Point_Offset[4 - 1].aim_position.y;
+	Return_Any_Point(&aim_line_point,10.0,1.0); //Center
+	
+	CCD_Adjust_to_GPS(Center_Point_CCD_Line,Front,Left,Center_Point.aim_position);
+	delay_ms(1000);*/
+	
 //	CCD_Adjust_to_GPS(Corner_Point_CCD_Line[1-1],0,1,Corner_Point[1-1].aim_position);
 //	delay_ms(1000);
 //	Return_Any_Point(&Corner_Point[2-1],15.0,1.5);

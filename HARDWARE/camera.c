@@ -4,7 +4,7 @@
 
 u8 Camera_Mode = 0;
 u8 Color_Hash_Table[3] = {0};
-u8 Color_Res[3] = {0};
+u8 Color_Res[10] = {0};
 u8 Is_Color_Finished = 0;
 
 u8 Product_Calibration_Sign = 0;

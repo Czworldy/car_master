@@ -3,10 +3,10 @@
 #include <stdlib.h>
 
 struct CCD_State TSL1401_State[TSL1401_ADC_Channel_Size]  = {
-	{60.0/77.0, 2179, 1594, 0},	//Front
-	{-60.0/82.0, 3209, 738, 2},	//Back
-	{100.0/86.0, 2181, 1594, 3},	//Left              done
-	{-100.0/97.0, 1671, 2016, 1},	//Right
+	{60.0/77.0, 2586, 1252, 0},	//Front
+	{-60.0/82.0, 3327, 640, 2},	//Back
+	{100.0/86.0, 2427, 1389, 3},	//Left              done
+	{-100.0/97.0, 1953, 1784, 1},	//Right
 //	{140.0/80.0, 1000, 1700, 3},	//Front
 //	{100.0/102.0, 950, 1900, 1},	//Back
 //	{140.0/80.0, 1400, 2000, 0},	//Left
@@ -411,7 +411,7 @@ void TSL1401_Edge_Detect(void)	//对应方向:0:成功,1:检测到全都为线,2:检测到全都为
 		}
 		else
 		{
-			for (i = 5; i < TSL1401_ADC_Buffer_Size - 5 - 5; ++i)
+			for (i = 5 + 10; i < TSL1401_ADC_Buffer_Size - 5 - 5 - 10; ++i)
 			{
 				if (TSL1401_ADC_Buffer[i][j] > ptr->Line_ADC_Threshold && 
 					TSL1401_ADC_Buffer[i+1][j] > ptr->Line_ADC_Threshold && 
@@ -424,7 +424,7 @@ void TSL1401_Edge_Detect(void)	//对应方向:0:成功,1:检测到全都为线,2:检测到全都为
 					break;
 				}
 			}
-			for (i = TSL1401_ADC_Buffer_Size - 5 - 5 - 1; i >= 5; --i)
+			for (i = TSL1401_ADC_Buffer_Size - 5 - 5 - 1 - 10; i >= 5; --i)
 			{
 				if (TSL1401_ADC_Buffer[i][j] <= ptr->Line_ADC_Threshold && 
 					TSL1401_ADC_Buffer[i+1][j] <= ptr->Line_ADC_Threshold && 
@@ -442,11 +442,11 @@ void TSL1401_Edge_Detect(void)	//对应方向:0:成功,1:检测到全都为线,2:检测到全都为
 		ptr->Line_Edge_Distance = abs(ptr->Line_Edge_Left_Pos - ptr->Line_Edge_Right_Pos);
 		ptr->Line_Edge_Median_Pos = (ptr->Line_Edge_Left_Pos + ptr->Line_Edge_Right_Pos) / 2;
 		
-		if(ptr->Line_Edge_Distance > 40
-			 && ptr->Line_Edge_Type != 1
-				&& ptr->Line_Edge_Type != 2)
-			ptr->Line_Edge_Type = 4;
-		else
+//		if(ptr->Line_Edge_Distance > 40
+//			 && ptr->Line_Edge_Type != 1
+//				&& ptr->Line_Edge_Type != 2)
+//			ptr->Line_Edge_Type = 4;
+//		else
 			ptr->Line_Edge_Type = 0;
 	}
 }

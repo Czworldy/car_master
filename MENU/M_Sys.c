@@ -964,7 +964,7 @@ void sys_PanTilt(void)
 
 void sys_Measure(void)
 {
-	u8 is_key = 0;
+	u8 is_key = 0,en = 0;
 	
 	LCD_Clear(WHITE);
 	KeyBoard_State = 0;
@@ -983,24 +983,46 @@ void sys_Measure(void)
 
 	while(1)
 	{
-		LCD_printf(0,6+36*0,300,24,24,"1.loc[0]=lld%		",moto_chassis[0].total_angle);
-		LCD_printf(0,6+36*1,300,24,24,"2.loc[1]=lld%		",moto_chassis[1].total_angle);
-		LCD_printf(0,6+36*2,300,24,24,"Angle = %lf        ",GPS_List[0].angle);
-		LCD_printf(0,6+36*3,300,24,24,"X = %lf        ",GPS_List[0].position.x);
-		LCD_printf(0,6+36*4,300,24,24,"Y = %lf        ",GPS_List[0].position.y);
-		
-		is_key = keyScan(MAINMENU);
-		
-		switch(keyValue)
+		set_spd[1] = 0;
+		LCD_printf(0,6+36*0,300,24,24,"1.loc[0]=%lld		",moto_chassis[0].total_angle);
+		LCD_printf(0,6+36*1,300,24,24,"2.loc[1]=%lld		",moto_chassis[1].total_angle);
+		LCD_printf(0,6+36*2,300,24,24,"3.Angle = %lf        ",GPS_List[0].angle);
+		LCD_printf(0,6+36*3,300,24,24,"4.X = %lf        ",GPS_List[0].position.x);
+		LCD_printf(0,6+36*4,300,24,24,"5.Y = %lf        ",GPS_List[0].position.y);
+		LCD_printf(0,6+36*5,300,24,24,"6.Grab:%s ",en == 1 ? "Enable" : "Disable");
+		is_key = keyScan(ROWTYPE);
+		if(is_key == 1)
 		{
-			case keyback:
-				Motor_Set_Enabled(0);
+			switch(keyValue)
+			{
+				case key6:
+					en = !en;
+					if(en)
+					{
+						Cylinder = Cylin_Down;
+						delay_ms(1000);
+						delay_ms(1000);
+						delay_ms(1000);
+						Grab = Grab_Open;
+					}
+					else
+					{
+						Grab = Grab_Close;
+						delay_ms(1000);
+						Cylinder = Cylin_Up;
+						
+					}
+					break;
 				
-				PID_Init();
-				return;
-			default:
-				break;
+				case keyback:
+					Motor_Set_Enabled(0);
+					
+					PID_Init();
+					return;
+				
+				default:
+					break;
+			}
 		}
-			
 	}
 }
