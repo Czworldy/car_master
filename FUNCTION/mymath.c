@@ -162,5 +162,10 @@ struct Point GetFoot_P2L_PK(struct Point *p,struct Point *p0,double k)
 	return foot;
 }
 
+int64_t Distance_to_loc(float distance)
+{
+	return distance*4211.0;
+}
+
 /**********************************END OF FILE*********************************/
 

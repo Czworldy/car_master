@@ -35,6 +35,7 @@ int main(void)
 	
 	set_loc[1] = PanTilt_Zero;
 	//Servo_Original_Point_Bend();
+	USART_SendByte(USART2 , 'a');
 	while(1)
 	{
 		

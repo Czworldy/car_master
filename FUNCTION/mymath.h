@@ -25,6 +25,7 @@ double GetLineAngle(struct Point *sta, struct Point *end);
 double GetDis_P2L(struct Point *p,double a,double b,double c);
 double GetDis_P2L_PK(struct Point *p,struct Point *p0,double k);
 double GetDis_P2L_PP(struct Point *p,struct Point *p1,struct Point *p2);
+int64_t Distance_to_loc(float distance);
 
 struct Point GetFoot_P2L(struct Point *p,double a,double b,double c);
 struct Point GetFoot_P2L_PK(struct Point *p,struct Point *p0,double k);

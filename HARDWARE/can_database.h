@@ -119,7 +119,7 @@ NO.5~0	[	ID numbers				|	ID numbers  &  Others		]
 	
 	extern uint8_t Can_Data_Num;
 	extern Can_Data Can_Database[];
-	extern uint16_t HASH_TABLE[1000];
+	extern uint16_t HASH_TABLE[];
 	extern union fi64_to_u8 CtrlCurrent;
 	extern union fi64_to_u8 Motor2Stm[];
 	extern union fi64_to_u8 CtrlVoltage;

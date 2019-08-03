@@ -16,7 +16,9 @@ void pos_Put(void);
 
 extern struct Line_Point Corner_Point[];
 extern struct CCD_Line Corner_Point_CCD_Line[];
-extern u8 black_mask;
+extern u8 black_Mask;
+extern u8 is_This_Black;
+extern u8 pos_Grab_cnt;
 
 #endif
 

@@ -229,7 +229,7 @@ void PID_Init(void)
 	PID_struct_init(&pid_spd[1], DELTA_PID, 30000, 30000,
 								60.0f,	0.001f,	0.1f	);  //4 motos angular rate closeloop.  0.80f,	0.03f,	0.0015f	(³¬µ÷)
 	PID_struct_init(&pid_loc[1], DELTA_PID, 50, 50,
-								2.0f,	0.005f,	0.00f	);  //0.80f,	0.003f,	0.000f	);  //4 motos angular location closeloop.}
+								2.0f,	0.010f,	0.00f	);  //0.80f,	0.003f,	0.000f	);  //4 motos angular location closeloop.}
 //	PID_struct_init(&pid_spd[2], DELTA_PID, 8000, 16384,
 //								24.0f,	1.2f,	0.02f	);  //4 motos angular rate closeloop.  0.80f,	0.03f,	0.0015f	(³¬µ÷)
 //	PID_struct_init(&pid_loc[2], DELTA_PID, 9600, 9600,

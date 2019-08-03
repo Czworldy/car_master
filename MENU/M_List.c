@@ -56,9 +56,9 @@ struct M_Type M_Route[M_NUM]=
 struct M_Type M_Process[M_NUM]=
 {	/*Name              菜单属性                函数                节点*/
 	{"1.Test",          M_UFunc,                process_Test,       {MainMenu, NULL} },
-	{"2.All",           M_UFunc,                process_All,        {MainMenu, NULL} },
-	{"3.Auto_RGB",      M_UFunc,                process_Auto_RGB,   {MainMenu, NULL} },
-	{"4.CCD_Auto_RGB",  M_UFunc,                process_CCD_Auto_RGB,{MainMenu, NULL} },
+//	{"2.All",           M_UFunc,                process_All,        {MainMenu, NULL} },
+//	{"3.Auto_RGB",      M_UFunc,                process_Auto_RGB,   {MainMenu, NULL} },
+//	{"4.CCD_Auto_RGB",  M_UFunc,                process_CCD_Auto_RGB,{MainMenu, NULL} },
 	{"5.Point_Test",    M_UFunc,                process_Point_Test, {MainMenu, NULL} },
 	{"6.My_Test", 		M_UFunc,                process_My_Test,	{MainMenu, NULL} },
 	{" ",               M_Empty,                NULL,               {MainMenu, NULL} },

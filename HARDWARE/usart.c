@@ -830,44 +830,72 @@ void USART2_DMA_RX_IRQHandler(void)
 }
 #else
 
-//u8 color_cnt = 0;
+u8 color_cnt = 0;
 
 void USART2_IRQHandler(void)
 {
 	
 	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET)
 	{
-//		Camera_RxBuffer[3] = Camera_RxBuffer[2];
-//		Camera_RxBuffer[2] = Camera_RxBuffer[1];
-//		Camera_RxBuffer[1] = Camera_RxBuffer[0];
+		Camera_RxBuffer[3] = Camera_RxBuffer[2];
+		Camera_RxBuffer[2] = Camera_RxBuffer[1];
+		Camera_RxBuffer[1] = Camera_RxBuffer[0];
 		Camera_RxBuffer[0] = USART2->DR;
-		
-		switch (Camera_RxBuffer[0])
-		{	
-			case 'b':
-				Color_Res[0] = 'b';
-				Is_Color_Finished = 1;
-				break;
-			case 'r':
-				Color_Res[0] = 'r';
-				Is_Color_Finished = 1;
-				break;
-			case 'g':
-				Color_Res[0] = 'g';
-				Is_Color_Finished = 1;
-				break;
-			case 'w':
-				Color_Res[0] = 'w';
-				Is_Color_Finished = 1;
-				break;
-			case 'k':
-				Color_Res[0] = 'k';
-				Is_Color_Finished = 1;
-				break;
-			default:
-				USART_SendByte(USART2,0x73);//s
-				break;
-		}	
+		if(Camera_RxBuffer[0] == 'b'||
+			Camera_RxBuffer[0] == 'r'||
+			 Camera_RxBuffer[0] == 'g'||
+			  Camera_RxBuffer[0] == 'k'||
+				Camera_RxBuffer[0] == 'w')
+			color_cnt++;
+		else
+		{
+			color_cnt = 0;
+			// Camera_RxBuffer[0] = Camera_RxBuffer[1] = Camera_RxBuffer[2] = Camera_RxBuffer[3] = 0x00;
+			return;
+		}
+		if(color_cnt < 4)
+			USART_SendByte(USART2, 0x73);
+		else if(color_cnt >= 4)
+		{
+			if(Camera_RxBuffer[0] == Camera_RxBuffer[1] && 
+			   Camera_RxBuffer[1] == Camera_RxBuffer[2] &&
+			   Camera_RxBuffer[2] == Camera_RxBuffer[3] )
+			{
+				switch (Camera_RxBuffer[0])
+				{	
+					case 'b':
+						Color_Res[0] = 'b';
+						Is_Color_Finished = 1;
+						break;
+					case 'r':
+						Color_Res[0] = 'r';
+						Is_Color_Finished = 1;
+						break;
+					case 'g':
+						Color_Res[0] = 'g';
+						Is_Color_Finished = 1;
+						break;
+					case 'w':
+						Color_Res[0] = 'w';
+						Is_Color_Finished = 1;
+						break;
+					case 'k':
+						Color_Res[0] = 'k';
+						Is_Color_Finished = 1;
+						break;
+					default:
+						USART_SendByte(USART2,0x73);//s
+						break;
+				}
+				color_cnt = 0;
+				USART_SendByte(USART2,'p');
+				Camera_RxBuffer[0] = Camera_RxBuffer[1] = Camera_RxBuffer[2] = Camera_RxBuffer[3] = 0x00;
+			}
+			else
+			{
+				USART_SendByte(USART2 , 0x73);
+			}
+		}
 //		switch (Camera_Mode)
 //		{
 //			case 1:

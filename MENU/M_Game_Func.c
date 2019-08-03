@@ -4,19 +4,19 @@ void Return_Any_Point(struct Line_Point *aim_line_point, double distance_err, do
 {
 	u8 is_key = 0;
 	
-	LCD_Clear(WHITE);
+	//LCD_Clear(WHITE);
 	SetLine(aim_line_point);
 	while (!(GetLength(&(GPS_List[0].position), &Aim_Line_Point.aim_position) < distance_err && fabs(GPS_List[0].radian - Aim_Line_Point.aim_radian) < angle_err * DEG2RAD))
 	{
 		GoLine();
 		
-		LCD_printf(0,6+36*0,300,24,24,"1.Angle = %lf        ",GPS_List[0].angle);
-		LCD_printf(0,6+36*1,300,24,24,"2.X = %lf        ",GPS_List[0].position.x);
-		LCD_printf(0,6+36*2,300,24,24,"3.Y = %lf        ",GPS_List[0].position.y);
+		LCD_printf(0,6+36*0,300,24,24,"1.Angle =%lf     	   ",GPS_List[0].angle);
+		LCD_printf(0,6+36*1,300,24,24,"2.X =%lf     	   ",GPS_List[0].position.x);
+		LCD_printf(0,6+36*2,300,24,24,"3.Y =%lf 	       ",GPS_List[0].position.y);
 		
-		LCD_printf(0,6+36*3,300,24,24,"1.Angle = %lf        ",Aim_Line_Point.aim_radian);
-		LCD_printf(0,6+36*4,300,24,24,"2.Aim X = %lf        ",Aim_Line_Point.aim_position.x);
-		LCD_printf(0,6+36*5,300,24,24,"3.Aim Y = %lf        ",Aim_Line_Point.aim_position.y);
+		LCD_printf(0,6+36*3,300,24,24,"1.Angle =%lf        `",Aim_Line_Point.aim_radian);
+		LCD_printf(0,6+36*4,300,24,24,"2.Aim X =%lf        `",Aim_Line_Point.aim_position.x);
+		LCD_printf(0,6+36*5,300,24,24,"3.Aim Y =%lf        `",Aim_Line_Point.aim_position.y);
 		
 		is_key = keyScan(1);
 		if (is_key)
@@ -623,13 +623,14 @@ void CCD_Adjust_to_GPS_Y(struct CCD_Line ccd_line, uint8_t ccdy, struct Point st
 }
 
 u8 pos_Grab_cnt = 1;
-u8 black_mask = 0;
-
+u8 black_Mask = 0;
+u8 is_This_Black = 0;
 struct Line_Point Color_Judge(void)
 {
 	struct Line_Point aim_line_point;
 	USART_SendByte(USART2,0x73);
 	
+	aim_line_point = Task_1_Put_Point_Offset[0];
 	while(!Is_Color_Finished);
 	
 	switch(Color_Res[0])
@@ -638,40 +639,52 @@ struct Line_Point Color_Judge(void)
 			aim_line_point = Task_1_Put_Point_Offset[1 - 1];
 			aim_line_point.aim_position.x = Center_Point.aim_position.x + Task_1_Put_Point_Offset[1 - 1].aim_position.x;
 			aim_line_point.aim_position.y = Center_Point.aim_position.y + Task_1_Put_Point_Offset[1 - 1].aim_position.y;
-			set_loc[1] = PanTilt_Zero + 1024*2 - 50; 
+			set_loc[1] = PanTilt_Zero + 1024*2; 
 			pos_Grab_cnt++;
 			Is_Color_Finished = 0;
+			Color_Res[0] = 0;
+			LCD_printf(0,6+36*7,300,24,24,"Blue Blue		");
 			break;
 		case 'g':
 			aim_line_point = Task_1_Put_Point_Offset[2 - 1];
 			aim_line_point.aim_position.x = Center_Point.aim_position.x + Task_1_Put_Point_Offset[2 - 1].aim_position.x;
 			aim_line_point.aim_position.y = Center_Point.aim_position.y + Task_1_Put_Point_Offset[2 - 1].aim_position.y;
-			set_loc[1] = PanTilt_Zero + 1024*4 - 50; 
+			set_loc[1] = PanTilt_Zero + 1024*4;  
 			pos_Grab_cnt++;
 			Is_Color_Finished = 0;
+			Color_Res[0] = 0;
+			LCD_printf(0,6+36*7,300,24,24,"Green Green		");
 			break;
 		case 'r':
 			aim_line_point = Task_1_Put_Point_Offset[3 - 1];
 			aim_line_point.aim_position.x = Center_Point.aim_position.x + Task_1_Put_Point_Offset[3 - 1].aim_position.x;
 			aim_line_point.aim_position.y = Center_Point.aim_position.y + Task_1_Put_Point_Offset[3 - 1].aim_position.y;
-			set_loc[1] = PanTilt_Zero - 1024*2 - 50; 
+			set_loc[1] = PanTilt_Zero - 1024*2; 
 			pos_Grab_cnt++;
 			Is_Color_Finished = 0;
+			Color_Res[0] = 0;
+			LCD_printf(0,6+36*7,300,24,24,"Red Red			");
 			break;
 		case 'w':
 			aim_line_point = Task_1_Put_Point_Offset[4 - 1];
 			aim_line_point.aim_position.x = Center_Point.aim_position.x + Task_1_Put_Point_Offset[4 - 1].aim_position.x;
 			aim_line_point.aim_position.y = Center_Point.aim_position.y + Task_1_Put_Point_Offset[4 - 1].aim_position.y;
-			set_loc[1] = PanTilt_Zero - 50; 
+			set_loc[1] = PanTilt_Zero; 
 			pos_Grab_cnt++;
 			Is_Color_Finished = 0;
+			Color_Res[0] = 0;
+			LCD_printf(0,6+36*7,300,24,24,"White White		");
 			break;
 		case 'k':
 			if(pos_Grab_cnt != 4)
 			{	
 				pos_Put();
-				black_mask = pos_Grab_cnt;
+				black_Mask = pos_Grab_cnt;
 				Is_Color_Finished = 0;
+				is_This_Black = 1;
+				pos_Grab_cnt++;
+				Color_Res[0] = 0;
+				LCD_printf(0,6+36*7,300,24,24,"Black Black		");
 				return Center_Point;
 			}
 			else if(pos_Grab_cnt == 4)
@@ -679,10 +692,14 @@ struct Line_Point Color_Judge(void)
 				aim_line_point = Task_1_Put_Point_Offset[5 - 1];
 				aim_line_point.aim_position.x = Center_Point.aim_position.x + Task_1_Put_Point_Offset[5 - 1].aim_position.x;
 				aim_line_point.aim_position.y = Center_Point.aim_position.y + Task_1_Put_Point_Offset[5 - 1].aim_position.y;
+				pos_Grab_cnt++; 
 				set_loc[1] = PanTilt_Zero - 1024*3 - 50; 
 				set_loc[0] = 500000;
 				Is_Color_Finished = 0;
+				Color_Res[0] = 0;
+				LCD_printf(0,6+36*7,300,24,24,"Black Black		");
 			}
+			break;
 		default:
 			break;
 	}
