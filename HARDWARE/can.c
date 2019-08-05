@@ -336,16 +336,16 @@ void CAN1_RX0_IRQHandler(void)
 	
 	CAN_Receive(CAN1, CAN_FIFO0, &RxMessage);
 	
-	if(HASH_TABLE[RxMessage.StdId] < Can_Data_Num)
+	if(HASH_TABLE[RxMessage.StdId - deviceOffset] < Can_Data_Num)
 	{
-		if(Can_Database[HASH_TABLE[RxMessage.StdId]].Data_length == RxMessage.DLC)
-			if(Can_Database[HASH_TABLE[RxMessage.StdId]].Data_type == READ_ONLY)
-				if(Can_Database[HASH_TABLE[RxMessage.StdId]].Channel == 1)
-					if(Can_Database[HASH_TABLE[RxMessage.StdId]].Fifo_num == CAN_Filter_FIFO0)
+		if(Can_Database[HASH_TABLE[RxMessage.StdId -deviceOffset]].Data_length == RxMessage.DLC)
+			if(Can_Database[HASH_TABLE[RxMessage.StdId - deviceOffset]].Data_type == READ_ONLY)
+				if(Can_Database[HASH_TABLE[RxMessage.StdId - deviceOffset]].Channel == 1)
+					if(Can_Database[HASH_TABLE[RxMessage.StdId - deviceOffset]].Fifo_num == CAN_Filter_FIFO0)
 					{
 						for(i=0;i<RxMessage.DLC;i++)
-							(*(Can_Database[HASH_TABLE[RxMessage.StdId]].Data_ptr+i)) = RxMessage.Data[i];
-						Can_Database[HASH_TABLE[RxMessage.StdId]].MenuFunc();
+							(*(Can_Database[HASH_TABLE[RxMessage.StdId - deviceOffset]].Data_ptr+i)) = RxMessage.Data[i];
+						Can_Database[HASH_TABLE[RxMessage.StdId - deviceOffset]].MenuFunc();
 					}
 	}
 }
@@ -357,16 +357,16 @@ void CAN1_RX1_IRQHandler(void)
 	CanRxMsg   RxMessage;
 	
 	CAN_Receive(CAN1, CAN_FIFO1, &RxMessage);
-	if(HASH_TABLE[RxMessage.StdId] < Can_Data_Num)
+	if(HASH_TABLE[RxMessage.StdId - deviceOffset] < Can_Data_Num)
 	{
-		if(Can_Database[HASH_TABLE[RxMessage.StdId]].Data_length == RxMessage.DLC)
-			if(Can_Database[HASH_TABLE[RxMessage.StdId]].Data_type == READ_ONLY)
-				if(Can_Database[HASH_TABLE[RxMessage.StdId]].Channel == 1)
-					if(Can_Database[HASH_TABLE[RxMessage.StdId]].Fifo_num == CAN_Filter_FIFO1)
+		if(Can_Database[HASH_TABLE[RxMessage.StdId] - deviceOffset].Data_length == RxMessage.DLC)
+			if(Can_Database[HASH_TABLE[RxMessage.StdId - deviceOffset]].Data_type == READ_ONLY)
+				if(Can_Database[HASH_TABLE[RxMessage.StdId - deviceOffset]].Channel == 1)
+					if(Can_Database[HASH_TABLE[RxMessage.StdId- deviceOffset]].Fifo_num == CAN_Filter_FIFO1)
 					{
 						for(i=0;i<RxMessage.DLC;i++)
-							(*(Can_Database[HASH_TABLE[RxMessage.StdId]].Data_ptr+i)) = RxMessage.Data[i];
-						Can_Database[HASH_TABLE[RxMessage.StdId]].MenuFunc();
+							(*(Can_Database[HASH_TABLE[RxMessage.StdId - deviceOffset]].Data_ptr+i)) = RxMessage.Data[i];
+						Can_Database[HASH_TABLE[RxMessage.StdId - deviceOffset]].MenuFunc();
 						
 					}
 	}
@@ -386,8 +386,8 @@ void CAN2_RX0_IRQHandler(void)
 	
 	CAN_Receive(CAN2, CAN_FIFO0, &RxMessage);
 	for(i=0;i<RxMessage.DLC;i++)
-		(*(Can_Database[HASH_TABLE[RxMessage.StdId]].Data_ptr+i)) = RxMessage.Data[i];
-	Can_Database[HASH_TABLE[RxMessage.StdId]].MenuFunc();
+		(*(Can_Database[HASH_TABLE[RxMessage.StdId - deviceOffset]].Data_ptr+i)) = RxMessage.Data[i];
+	Can_Database[HASH_TABLE[RxMessage.StdId - deviceOffset]].MenuFunc();
 }
 #endif
 #if  USE_CAN2_R1
@@ -401,7 +401,7 @@ void CAN2_RX1_IRQHandler(void)
 	
 	CAN_Receive(CAN2, CAN_FIFO1, &RxMessage);
 	for(i=0;i<RxMessage.DLC;i++)
-		(*(Can_Database[HASH_TABLE[RxMessage.StdId]].Data_ptr+i)) = RxMessage.Data[i];
-	Can_Database[HASH_TABLE[RxMessage.StdId]].MenuFunc();
+		(*(Can_Database[HASH_TABLE[RxMessage.StdId - deviceOffset]].Data_ptr+i)) = RxMessage.Data[i];
+	Can_Database[HASH_TABLE[RxMessage.StdId - deviceOffset]].MenuFunc();
 }
 #endif

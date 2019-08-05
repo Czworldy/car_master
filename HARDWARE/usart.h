@@ -221,6 +221,8 @@ extern volatile u8 PanTilt_RxBuffer[];
 
 extern u8 WIFI_RxBuffer_Idx;
 
+extern u8 color_Detect_Cnt;
+
 void USART_Config(void);
 void Handle_USART_DMA_EN(void);
 void GPS_USART_DMA_EN(void);

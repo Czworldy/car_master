@@ -831,7 +831,7 @@ void USART2_DMA_RX_IRQHandler(void)
 #else
 
 u8 color_cnt = 0;
-
+u8 color_Detect_Cnt = 4;
 void USART2_IRQHandler(void)
 {
 	
@@ -864,23 +864,23 @@ void USART2_IRQHandler(void)
 				switch (Camera_RxBuffer[0])
 				{	
 					case 'b':
-						Color_Res[0] = 'b';
+						Color_Res[color_Detect_Cnt++] = 'b';
 						Is_Color_Finished = 1;
 						break;
 					case 'r':
-						Color_Res[0] = 'r';
+						Color_Res[color_Detect_Cnt++] = 'r';
 						Is_Color_Finished = 1;
 						break;
 					case 'g':
-						Color_Res[0] = 'g';
+						Color_Res[color_Detect_Cnt++] = 'g';
 						Is_Color_Finished = 1;
 						break;
 					case 'w':
-						Color_Res[0] = 'w';
+						Color_Res[color_Detect_Cnt++] = 'w';
 						Is_Color_Finished = 1;
 						break;
 					case 'k':
-						Color_Res[0] = 'k';
+						Color_Res[color_Detect_Cnt++] = 'k';
 						Is_Color_Finished = 1;
 						break;
 					default:

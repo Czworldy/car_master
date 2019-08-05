@@ -11,7 +11,7 @@ int main(void)
 	LED_Init();
 //	EXTIX_Init();
 	PWM_Init();  //wheels
-	//TIM12_Int_Init(10000-1, 8400-1);
+	TIM12_Int_Init(10000-1, 8400-1);
 	USART_Config();
 	
 	

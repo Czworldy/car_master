@@ -37,7 +37,7 @@ struct M_Type M_System[M_NUM]=
 	{"4.GPS",           M_UFunc,                sys_GPS,            {MainMenu, NULL} },
 	{"5.Mecanum",       M_UFunc,                sys_Mecanum,        {MainMenu, NULL} },
 	{"6.Servo",         M_UFunc,                sys_Servo,          {MainMenu, NULL} },
-	{"7.QR Code",       M_UFunc,                sys_QR_Code,        {MainMenu, NULL} },
+	{"7.		",      M_Empty,                NULL, 		        {MainMenu, NULL} },
 	{"8.Camera",        M_UFunc,                sys_Camera,         {MainMenu, NULL} },
 };
 
@@ -61,7 +61,7 @@ struct M_Type M_Process[M_NUM]=
 //	{"4.CCD_Auto_RGB",  M_UFunc,                process_CCD_Auto_RGB,{MainMenu, NULL} },
 	{"5.Point_Test",    M_UFunc,                process_Point_Test, {MainMenu, NULL} },
 	{"6.My_Test", 		M_UFunc,                process_My_Test,	{MainMenu, NULL} },
-	{" ",               M_Empty,                NULL,               {MainMenu, NULL} },
+	{"7.Task_2",        M_UFunc,                process_Task_2,     {MainMenu, NULL} },
 	{" ",               M_Empty,                NULL,               {MainMenu, NULL} },
 };
 

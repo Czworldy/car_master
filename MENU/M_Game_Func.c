@@ -1,12 +1,16 @@
 #include "all.h"
 
-void Return_Any_Point(struct Line_Point *aim_line_point, double distance_err, double angle_err)
+void Return_Any_Point(struct Line_Point *aim_line_point, double distance_err, double angle_err,u8 goLine_timeout)
 {
 	u8 is_key = 0;
 	
 	//LCD_Clear(WHITE);
 	SetLine(aim_line_point);
-	while (!(GetLength(&(GPS_List[0].position), &Aim_Line_Point.aim_position) < distance_err && fabs(GPS_List[0].radian - Aim_Line_Point.aim_radian) < angle_err * DEG2RAD))
+	TIM12_OVERFLOW_CNT = 0;
+	TIM12->CNT = 0;
+	TIM_Cmd(TIM12, ENABLE);
+	
+	while (!(GetLength(&(GPS_List[0].position), &Aim_Line_Point.aim_position) < distance_err && fabs(GPS_List[0].radian - Aim_Line_Point.aim_radian) < angle_err * DEG2RAD) && TIM12_OVERFLOW_CNT < goLine_timeout)
 	{
 		GoLine();
 		
@@ -35,15 +39,10 @@ void Return_Any_Point(struct Line_Point *aim_line_point, double distance_err, do
 	}
 	SPEED_STOP;
 	SetSpeed(Speed_X, Speed_Y, Speed_Rotation);
+	
+	TIM_Cmd(TIM12,DISABLE);
 }
-struct CCD_Line Corner_Point_CCD_Line[6] ={
-	{{60, 58, 0, 0}, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}},//F//B//L//R
-	{{110, 0, 68, 0}, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}},
-	{{0, 0, 70, 19}, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}},
-	{{0, 57, 0, 58}, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}},
-	{{64, 0, 0, 0}, {{0, 100}, {30, 30}, {0, 30}, {0, 0}}},
-	{{0, 0, 0, 64}, {{100, 0}, {30, 30}, {30, 0}, {0, 0}}},
-};
+
 struct Line_Point Corner_Point[4] = {
 	{{0, 750}, 0, 40, 300, 40, -1, 2},
 	{{1350, 750}, 0, 40, 300, 40, -1, 2},
@@ -204,7 +203,7 @@ void CCD_Adjust(struct CCD_Line ccd_line, uint8_t ccdx, uint8_t ccdy)
 	aim_line_point.aim_position.x = GPS_List[0].position.x + (ccd_line.Line_Edge_Median_Pos[ccdx] - TSL1401_State[ccdx].Line_Edge_Median_Pos) * TSL1401_State[ccdx].Pixel_To_Distance;
 	aim_line_point.aim_position.y = GPS_List[0].position.y + (ccd_line.Line_Edge_Median_Pos[ccdy] - TSL1401_State[ccdy].Line_Edge_Median_Pos) * TSL1401_State[ccdy].Pixel_To_Distance;
 	
-	Return_Any_Point(&aim_line_point,10.0,1.0);
+	Return_Any_Point(&aim_line_point,10.0,1.0,3);
 }
 
 void CCD_Adjust_to_GPS(struct CCD_Line ccd_line, uint8_t ccdx, uint8_t ccdy, struct Point std_point)
@@ -371,9 +370,10 @@ void CCD_Adjust_to_GPS(struct CCD_Line ccd_line, uint8_t ccdx, uint8_t ccdy, str
 	aim_line_point.aim_position.x = GPS_List[0].position.x + (ccd_line.Line_Edge_Median_Pos[ccdx] - TSL1401_State[ccdx].Line_Edge_Median_Pos) * TSL1401_State[ccdx].Pixel_To_Distance;
 	aim_line_point.aim_position.y = GPS_List[0].position.y + (ccd_line.Line_Edge_Median_Pos[ccdy] - TSL1401_State[ccdy].Line_Edge_Median_Pos) * TSL1401_State[ccdy].Pixel_To_Distance;
 	
-	Return_Any_Point(&aim_line_point,5.0,1.0);
+	Return_Any_Point(&aim_line_point,5.0,1.0,3);
 	
 	GPS_Init(std_point.x, std_point.y);
+	delay_ms(200);
 }
 
 void CCD_Adjust_to_GPS_X(struct CCD_Line ccd_line, uint8_t ccdx, struct Point std_start_pos)
@@ -385,12 +385,7 @@ void CCD_Adjust_to_GPS_X(struct CCD_Line ccd_line, uint8_t ccdx, struct Point st
 	
 	ccd_adjustment_sign = 0;
 	aim_line_point = CCD_Adjustment;
-	aim_line_point.aim_position.x = GPS_List[0].position.x; 
-	aim_line_point.aim_position.y = GPS_List[0].position.y + ccd_line.Line_Move_Offset[0].y;
-	SetLine(&aim_line_point);
-	
-	Return_Any_Point(&aim_line_point,10.0,1.0);
-	
+
 	TSL1401_SetEnabled(1);
 	
 	delay_ms(500);
@@ -448,7 +443,7 @@ void CCD_Adjust_to_GPS_X(struct CCD_Line ccd_line, uint8_t ccdx, struct Point st
 	}
 	if (ccd_adjustment_sign)
 	{
-		Return_Any_Point(&aim_line_point,5.0,1.0);
+		Return_Any_Point(&aim_line_point,5.0,1.0,3);
 		
 		delay_ms(500);
 		while (!TSL1401_Cal_Ready);
@@ -489,14 +484,16 @@ void CCD_Adjust_to_GPS_X(struct CCD_Line ccd_line, uint8_t ccdx, struct Point st
 	aim_line_point.aim_position.x = GPS_List[0].position.x + (ccd_line.Line_Edge_Median_Pos[ccdx] - TSL1401_State[ccdx].Line_Edge_Median_Pos) * TSL1401_State[ccdx].Pixel_To_Distance;
 	aim_line_point.aim_position.y = GPS_List[0].position.y;//+ (ccd_line.Line_Edge_Median_Pos[ccdy] - TSL1401_State[ccdy].Line_Edge_Median_Pos) * TSL1401_State[ccdy].Pixel_To_Distance;
 	
-	Return_Any_Point(&aim_line_point,5.0,1.0);
+	Return_Any_Point(&aim_line_point,5.0,1.0,3);
 	
 	delay_ms(50);
 	GPS_Init(std_start_pos.x,GPS_List[0].position.y);
 	
-	aim_line_point.aim_position = std_start_pos;
+	delay_ms(200);
 	
-	Return_Any_Point(&aim_line_point,10.0,1.0);
+//	aim_line_point.aim_position = std_start_pos;
+//	
+//	Return_Any_Point(&aim_line_point,10.0,1.0);
 }
 
 void CCD_Adjust_to_GPS_Y(struct CCD_Line ccd_line, uint8_t ccdy, struct Point std_start_pos)
@@ -508,11 +505,7 @@ void CCD_Adjust_to_GPS_Y(struct CCD_Line ccd_line, uint8_t ccdy, struct Point st
 
 	ccd_adjustment_sign = 0;
 	aim_line_point = CCD_Adjustment;
-	aim_line_point.aim_position.x = GPS_List[0].position.x + ccd_line.Line_Move_Offset[0].x; 
-	aim_line_point.aim_position.y = GPS_List[0].position.y;
-	SetLine(&aim_line_point);
 	
-	Return_Any_Point(&aim_line_point,5.0,1.0);
 
 	TSL1401_SetEnabled(1);
 	
@@ -563,15 +556,15 @@ void CCD_Adjust_to_GPS_Y(struct CCD_Line ccd_line, uint8_t ccdy, struct Point st
 			aim_line_point.aim_position.y = GPS_List[0].position.y + ccd_line.Line_Move_Offset[1].y;
 			SetLine(&aim_line_point);
 			break;
-		case 4:
-			ccd_adjustment_sign &= ~(2 << 2);
-			ccd_adjustment_sign |= (2 << 2);
-			aim_line_point.aim_position.x = GPS_List[0].position.x + ccd_line.Line_Move_Offset[2].x;
-			break;
+//		case 4:
+//			ccd_adjustment_sign &= ~(2 << 2);
+//			ccd_adjustment_sign |= (2 << 2);
+//			aim_line_point.aim_position.x = GPS_List[0].position.x + ccd_line.Line_Move_Offset[2].x;
+//			break;
 	}
 	if (ccd_adjustment_sign)
 	{
-		Return_Any_Point(&aim_line_point,5.0,1.0);
+		Return_Any_Point(&aim_line_point,5.0,1.0,3);
 		
 		delay_ms(500);
 		while (!TSL1401_Cal_Ready);
@@ -612,19 +605,23 @@ void CCD_Adjust_to_GPS_Y(struct CCD_Line ccd_line, uint8_t ccdy, struct Point st
 	aim_line_point.aim_position.x = GPS_List[0].position.x;//+ (ccd_line.Line_Edge_Median_Pos[ccdx] - TSL1401_State[ccdx].Line_Edge_Median_Pos) * TSL1401_State[ccdx].Pixel_To_Distance;
 	aim_line_point.aim_position.y = GPS_List[0].position.y + (ccd_line.Line_Edge_Median_Pos[ccdy] - TSL1401_State[ccdy].Line_Edge_Median_Pos) * TSL1401_State[ccdy].Pixel_To_Distance;
 	
-	Return_Any_Point(&aim_line_point,5.0,1.0);
+	Return_Any_Point(&aim_line_point,5.0,1.0,3);
 	
 	delay_ms(50);
 	GPS_Init(GPS_List[0].position.x,std_start_pos.y);
+	delay_ms(200);
 	
-	aim_line_point.aim_position = std_start_pos;
-	 
-	Return_Any_Point(&aim_line_point,5.0,1.0);
+//	aim_line_point.aim_position = std_start_pos;
+//	 
+//	Return_Any_Point(&aim_line_point,5.0,1.0);
 }
+
 
 u8 pos_Grab_cnt = 1;
 u8 black_Mask = 0;
-u8 is_This_Black = 0;
+u8 is_This_Black_Noput = 0;
+u8 last_Black = 0;
+
 struct Line_Point Color_Judge(void)
 {
 	struct Line_Point aim_line_point;
@@ -633,13 +630,13 @@ struct Line_Point Color_Judge(void)
 	aim_line_point = Task_1_Put_Point_Offset[0];
 	while(!Is_Color_Finished);
 	
-	switch(Color_Res[0])
+	switch(Color_Res[color_Detect_Cnt - 1])
 	{
 		case 'b':
 			aim_line_point = Task_1_Put_Point_Offset[1 - 1];
 			aim_line_point.aim_position.x = Center_Point.aim_position.x + Task_1_Put_Point_Offset[1 - 1].aim_position.x;
 			aim_line_point.aim_position.y = Center_Point.aim_position.y + Task_1_Put_Point_Offset[1 - 1].aim_position.y;
-			set_loc[1] = PanTilt_Zero + 1024*2; 
+			set_loc[1] = PanTilt_Zero + 1024*2 + 20; 
 			pos_Grab_cnt++;
 			Is_Color_Finished = 0;
 			Color_Res[0] = 0;
@@ -649,7 +646,7 @@ struct Line_Point Color_Judge(void)
 			aim_line_point = Task_1_Put_Point_Offset[2 - 1];
 			aim_line_point.aim_position.x = Center_Point.aim_position.x + Task_1_Put_Point_Offset[2 - 1].aim_position.x;
 			aim_line_point.aim_position.y = Center_Point.aim_position.y + Task_1_Put_Point_Offset[2 - 1].aim_position.y;
-			set_loc[1] = PanTilt_Zero + 1024*4;  
+			set_loc[1] = PanTilt_Zero + 1024*4 - 55;  
 			pos_Grab_cnt++;
 			Is_Color_Finished = 0;
 			Color_Res[0] = 0;
@@ -659,7 +656,7 @@ struct Line_Point Color_Judge(void)
 			aim_line_point = Task_1_Put_Point_Offset[3 - 1];
 			aim_line_point.aim_position.x = Center_Point.aim_position.x + Task_1_Put_Point_Offset[3 - 1].aim_position.x;
 			aim_line_point.aim_position.y = Center_Point.aim_position.y + Task_1_Put_Point_Offset[3 - 1].aim_position.y;
-			set_loc[1] = PanTilt_Zero - 1024*2; 
+			set_loc[1] = PanTilt_Zero + 1024*6; 
 			pos_Grab_cnt++;
 			Is_Color_Finished = 0;
 			Color_Res[0] = 0;
@@ -669,7 +666,7 @@ struct Line_Point Color_Judge(void)
 			aim_line_point = Task_1_Put_Point_Offset[4 - 1];
 			aim_line_point.aim_position.x = Center_Point.aim_position.x + Task_1_Put_Point_Offset[4 - 1].aim_position.x;
 			aim_line_point.aim_position.y = Center_Point.aim_position.y + Task_1_Put_Point_Offset[4 - 1].aim_position.y;
-			set_loc[1] = PanTilt_Zero; 
+			set_loc[1] = PanTilt_Zero - 10; 
 			pos_Grab_cnt++;
 			Is_Color_Finished = 0;
 			Color_Res[0] = 0;
@@ -681,7 +678,7 @@ struct Line_Point Color_Judge(void)
 				pos_Put();
 				black_Mask = pos_Grab_cnt;
 				Is_Color_Finished = 0;
-				is_This_Black = 1;
+				is_This_Black_Noput = 1;
 				pos_Grab_cnt++;
 				Color_Res[0] = 0;
 				LCD_printf(0,6+36*7,300,24,24,"Black Black		");
@@ -693,8 +690,9 @@ struct Line_Point Color_Judge(void)
 				aim_line_point.aim_position.x = Center_Point.aim_position.x + Task_1_Put_Point_Offset[5 - 1].aim_position.x;
 				aim_line_point.aim_position.y = Center_Point.aim_position.y + Task_1_Put_Point_Offset[5 - 1].aim_position.y;
 				pos_Grab_cnt++; 
-				set_loc[1] = PanTilt_Zero - 1024*3 - 50; 
+				set_loc[1] = PanTilt_Zero + 1024*5 - 50; 
 				set_loc[0] = 500000;
+				last_Black = 1;
 				Is_Color_Finished = 0;
 				Color_Res[0] = 0;
 				LCD_printf(0,6+36*7,300,24,24,"Black Black		");

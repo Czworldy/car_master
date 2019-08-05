@@ -8,6 +8,7 @@
 	
 	#define fp64 double
 	#define fp32  float
+	#define deviceOffset 0x1FF
 	
 union fi64_to_u8     //fp64型数据，或int64_t型数据转成u8型数据进行can总线发送
 	{
@@ -56,10 +57,6 @@ NO.5~0	[	ID numbers				|	ID numbers  &  Others		]
 */
 	typedef enum
 	{
-		W_MaxSpeed_ID = 0x1C,
-		W_StartMoving_ID = 0x1D,
-		W_DelayTime_ID = 0x1E,
-			
 		ControlMotorID = 0x200,
 		ControlMotorID2 = 0x1FF,
 		MOTOR0 = MotorBaseID + 1,
@@ -68,40 +65,9 @@ NO.5~0	[	ID numbers				|	ID numbers  &  Others		]
 		MOTOR3 = MotorBaseID + 4,
 		
 		PanTiltID = 0x205,
-		
-		MISO_MR2_WAKEUP_ID=0x01,
-		MISO_MR2_RISE_ID=0xD0,
-		MISO_ANG_ID = 0xcc,
-		MOSI_RestartGyro_ID = 0xce,
-		S_GYRO_RAD_ID	= 0x52,
-		MISO_CYLINDER_ID = 0xd1,
-		MISO_ANG_UP = 0x02,
-		MISO_ANG_DOWN = 0x03,
 	}ID_NUMDEF;	
 	
-	/*主控和GPS协主控之间的命令格式*/
-	typedef enum
-	{
-		NO_COMMAND			= 0x00,
-		//M_G_CMD_ID下的命令
-		GPS_READ			= 0x01,		//索取GPS信息命令
-		CHECK_FLOAT			= 0x02,		//通知GPS协主控校准陀螺仪零漂命令
-		GYRO_INIT			= 0x03,		//通知GPS协主控标定陀螺仪命令
-		ENC_L_INIT			= 0x04,		//通知GPS协主控标定码盘正反转系数命令
-		ENC_R_INIT			= 0x05,		//通知GPS协主控标定码盘旋转半径命令
-		//G_M_CMD_ID下的命令
-		CF_NORMAL			= 0x06,
-		CF_CHANGED			= 0x07,
-		CF_ERROR			= 0x08
-	}COM_TYPE;
 	
-	typedef enum
-	{
-		FIND_ONCE = 0x01,
-		FIND_CONTINIOUS = 0x02,
-		FIND_NO_SEND = 0x03,
-		FIND_STOP = 0x00
-	}CAMERA_CMD;
 	
 	typedef struct
 	{
@@ -127,24 +93,6 @@ NO.5~0	[	ID numbers				|	ID numbers  &  Others		]
 	
 	void Hash_Table_init(void);
 	void Write_Database(ID_NUMDEF ID_NUM);
-typedef union 
-{
-    u8 d[2];
-    s16 v;
-}u8tos16_t;
-
-typedef struct
-{
-		u8tos16_t	x_or_angle;
-		u8tos16_t	y_or_dis;
-		u8tos16_t	z;
-	  u8tos16_t	turn;  
-		int time_flag;
-}camera_t;
-
-extern union fi64_to_u8 camera_data1;
-extern uint8_t MISO_FAN_GRAB_STATUS;
-extern uint8_t M0SI_FAN_GRAB;
 
 #endif
 

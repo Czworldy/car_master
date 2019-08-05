@@ -14,7 +14,6 @@ void sys_Encoder(void);
 void sys_GPS(void);
 void sys_Mecanum(void);
 void sys_Servo(void);
-void sys_QR_Code(void);
 void sys_Camera(void);
 void sys_PanTilt(void);
 void sys_Measure(void);
