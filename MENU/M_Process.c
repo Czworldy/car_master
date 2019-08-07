@@ -6440,12 +6440,14 @@ struct Line_Point Task_1_Take_Point[4] = {
 	{{494.97, 205.03}, 0, 40, 300, 40, -1, 2},
 	{{494.97, 1194.97}, 0, 40, 300, 40, -1, 2},
 };
+
 struct Line_Point Task_1_Take_Point_Offset[4] = {
 	{{-345, 345}, 0, 40, 300, 40, -1, 2},
 	{{-355, -355}, 0, 40, 300, 40, -1, 2},
 	{{330, -355}, 0, 40, 300, 40, -1, 2},
 	{{335, 345}, 0, 40, 300, 40, -1, 2},
 };
+
 struct Line_Point Task_1_Put_Point_Offset[5] = {
 	{{-197, 0}, 0, 40, 100, 40, -1, 2}, //blue
 	{{0, -195}, 0, 40, 100, 40, -1, 2},//green
@@ -6453,13 +6455,13 @@ struct Line_Point Task_1_Put_Point_Offset[5] = {
 	{{0, 195}, 0, 40, 100, 40, -1, 2},//white
 	{{-167, 167}, 0, 40, 100, 40, -1, 2} //black
 };
+
 struct Line_Point Center_Point =
 	{{0, 700}, 0, 40, 300, 40, -1, 2};
 struct Line_Point Start_Point = 
 	{{0, 0}, 0, 40, 300, 40, -1, 2};
 struct CCD_Line Center_Point_CCD_Line = 
 	{{64, 64, 64, 64 }, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}};
-
 
 void process_Point_Test(void)
 {
@@ -6591,8 +6593,8 @@ void process_My_Test(void)
 		Return_Any_Point(&aim_line_point,10.0,1.0,6);
 		CCD_Adjust_to_GPS(Center_Point_CCD_Line,Back,Left,Center_Point.aim_position);
 		
-		set_loc[1] = PanTilt_Zero + 1024*5 - 50; 
-		set_loc[0] = 500000;
+		set_loc[1] = PanTilt_Zero + 1024*5 - 70; 
+		set_loc[0] = 490000;
 		
 		put_line_point = Task_1_Put_Point_Offset[5 - 1];
 		put_line_point.aim_position.x = Center_Point.aim_position.x + Task_1_Put_Point_Offset[5 - 1].aim_position.x;
@@ -6610,14 +6612,18 @@ struct Line_Point task2_Aim_Point[4] = {
 	{{700, 0}, 0, 40, 300, 40, -1, 2},//green
 	{{-700, 0}, 0, 40, 300, 40, -1, 2},//blue
 };
+
 struct Line_Point task2_Take_Point[2] = {
-	{{-225, 1400}, 0, 40, 300, 40, -1, 2},//left
-	{{210, 1400}, 0, 40, 300, 40, -1, 2},//right
+	{{-215, 1400}, 0, 40, 190, 40, -1, 2},//left
+	{{200, 1400}, 0, 40, 190, 40, -1, 2},//right
 };
-struct Line_Point task2_Take_Point_Offset[2] = {
+
+struct Line_Point task2_Take_Point_Offset[3] = {
 	{{18.9, -58.14}, 0, 40, 100, 40, -1, 2},//leftA->B
 	{{-18.9, -58.14}, 0, 40, 100, 40, -1, 2},//rightD->C
+	{{-40, 36}, 0, 40, 100, 40, -1, 2},//rightD->E
 };
+
 struct CCD_Line Corner_Point_CCD_Line[4] ={//F//B//L//R
 	{{0, 64, 0, 64}, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}},//white
 	{{0, 64, 64, 0}, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}},//red
@@ -6655,11 +6661,11 @@ void process_Task_2(void)
 {
 	struct Line_Point aim_line_point;//,put_line_point;
 	
+	LCD_Clear(WHITE);
 	GPS_Clear();
 	delay_ms(100);
 	GPS_Init(0,-150.0);
 	delay_ms(200);
-	
 	
 	aim_line_point = task2_Aim_Point[1 - 1];
 	Return_Any_Point(&aim_line_point,15.0,1.0,11);
@@ -6670,7 +6676,7 @@ void process_Task_2(void)
 	
 	Return_Any_Point(&aim_line_point,10.0,1.0,5);
 	
-	set_loc[0] = 500000;
+	set_loc[0] = 490000;
 	set_loc[1] = PanTilt_Zero - 1024;
 	CCD_Adjust_to_GPS_Y(task2_Take_Point_CCD_Line[1 - 1],Left,task2_Take_Point[1 - 1].aim_position);
 	
@@ -6678,11 +6684,14 @@ void process_Task_2(void)
 	pos_Grab();
 	
 	USART_SendByte(USART2, 0x73);
-	while(!Is_Color_Finished);
 	
-	switch(Color_Res[5 - 1])
+	while(!Is_Color_Finished);
+	Is_Color_Finished = 0;
+	
+	switch(Color_Res[5 - 1])//A
 	{
 		case 'w':
+			LCD_printf(0,6+36*8,300,24,24,"White White		");
 			set_loc[0] = 400000;
 			set_loc[1] = PanTilt_Zero + 1024*2;
 			aim_line_point = task2_Aim_Point[1 - 1];
@@ -6696,8 +6705,16 @@ void process_Task_2(void)
 			Return_Any_Point(&aim_line_point,10.0,1.0,7);
 			//可以加CCD校准
 			pos_Put();
+			//回程
+			set_loc[0] = 490000;
+			set_loc[1] = PanTilt_Zero - 1024;
+			aim_line_point = task2_Take_Point[1 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,8);
+			CCD_Adjust_to_GPS_Y(task2_Take_Point_CCD_Line[1 - 1],Left,task2_Take_Point[1 - 1].aim_position);
+		
 			break;
 		case 'b':
+			LCD_printf(0,6+36*8,300,24,24,"Blue Blue		");
 			set_loc[0] = 400000;
 			set_loc[1] = PanTilt_Zero + 1024*4;
 			aim_line_point = task2_Middle_Point[1 - 1];
@@ -6715,15 +6732,30 @@ void process_Task_2(void)
 			aim_line_point.aim_position.y = GPS_List[0].position.y + task2_Aim_Point_Offset[4 - 1].aim_position.y;
 			
 			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
 			pos_Put();
+			//回
+			set_loc[0] = 490000;
+			set_loc[1] = PanTilt_Zero - 1024;
+			aim_line_point = task2_Middle_Point[1 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			CCD_Adjust_to_GPS_Y(task2_Middle_Point_CCD_Line[1 - 1],Right,task2_Middle_Point[1 - 1].aim_position);
+			
+			aim_line_point = task2_Take_Point[1 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,8);
+			CCD_Adjust_to_GPS_Y(task2_Take_Point_CCD_Line[1 - 1],Left,task2_Take_Point[1 - 1].aim_position);
+		
 			break;
 		case 'r':
+			LCD_printf(0,6+36*8,300,24,24,"Red Red	  		");
 			set_loc[0] = 400000;
 			set_loc[1] = PanTilt_Zero + 1024*6;
 		
 			aim_line_point = task2_Aim_Point[2 - 1];
+			aim_line_point.speed_max = 100;
 			aim_line_point.aim_position.x = GPS_List[0].position.x;
-			aim_line_point.aim_position.y = GPS_List[0].position.y - 50;
+			aim_line_point.aim_position.y = GPS_List[0].position.y - 70;
 			Return_Any_Point(&aim_line_point,10.0,1.0,7);
 			
 			aim_line_point.aim_position.x = GPS_List[0].position.x + 400; //避开放置区
@@ -6740,15 +6772,38 @@ void process_Task_2(void)
 			aim_line_point.aim_position.x = GPS_List[0].position.x + task2_Aim_Point_Offset[2 - 1].aim_position.x;
 			aim_line_point.aim_position.y = GPS_List[0].position.y;
 			Return_Any_Point(&aim_line_point,10.0,1.0,7);
-			pos_Put();
+			pos_Put(); 
+			//回
+			set_loc[0] = 490000;
+			set_loc[1] = PanTilt_Zero - 1024;
+			aim_line_point = task2_Take_Point[2 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			aim_line_point.speed_max = 100;
+			aim_line_point.aim_position.x = GPS_List[0].position.x;
+			aim_line_point.aim_position.y = GPS_List[0].position.y - 70;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			delay_ms(50);
+			
+			aim_line_point.aim_position.x = GPS_List[0].position.x - 400; //避开放置区
+			aim_line_point.aim_position.y = GPS_List[0].position.y;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			aim_line_point = task2_Aim_Point[1 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			CCD_Adjust_to_GPS(Corner_Point_CCD_Line[1 - 1],Back,Right,task2_Aim_Point[1 - 1].aim_position);
+			
+			aim_line_point = task2_Take_Point[1 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,8);
+			CCD_Adjust_to_GPS_Y(task2_Take_Point_CCD_Line[1- 1],Left,task2_Take_Point[1 - 1].aim_position);
 			break;
 		case 'g':
+			LCD_printf(0,6+36*8,300,24,24,"Green Green	  		");
 			set_loc[0] = 400000;
 			set_loc[1] = PanTilt_Zero + 1024*4;
 			aim_line_point = task2_Middle_Point[3 - 1];
 			aim_line_point.speed_max = 100;
 			aim_line_point.aim_position.x = GPS_List[0].position.x;
-			aim_line_point.aim_position.y = GPS_List[0].position.y - 50;
+			aim_line_point.aim_position.y = GPS_List[0].position.y - 70;
 			Return_Any_Point(&aim_line_point,10.0,1.0,7);
 			
 			aim_line_point.aim_position.x = GPS_List[0].position.x + 400; //避开放置区
@@ -6763,7 +6818,7 @@ void process_Task_2(void)
 			aim_line_point = task2_Aim_Point[3 - 1];
 			Return_Any_Point(&aim_line_point,10.0,1.0,7);
 		
-			CCD_Adjust_to_GPS(Corner_Point_CCD_Line[3 - 1],Front,Right,task2_Aim_Point[3 - 1].aim_position);
+			CCD_Adjust_to_GPS(Corner_Point_CCD_Line[3 - 1],Front,Left,task2_Aim_Point[3 - 1].aim_position);
 			
 			aim_line_point = task2_Aim_Point_Offset[3 - 1];
 		
@@ -6772,12 +6827,933 @@ void process_Task_2(void)
 			
 			Return_Any_Point(&aim_line_point,10.0,1.0,7); 
 			pos_Put();
+			
+			//回
+			set_loc[0] = 490000;
+			set_loc[1] = PanTilt_Zero - 1024;
+			aim_line_point = task2_Middle_Point[3 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7); 
+			Return_Any_Point(&task2_Take_Point[2 - 1],10.0,1.0,7);
+			aim_line_point.speed_max = 100;
+			aim_line_point.aim_position.x = GPS_List[0].position.x;
+			aim_line_point.aim_position.y = GPS_List[0].position.y - 70;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			delay_ms(50);
+			
+			aim_line_point.aim_position.x = GPS_List[0].position.x - 400; //避开放置区
+			aim_line_point.aim_position.y = GPS_List[0].position.y;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			aim_line_point = task2_Aim_Point[1 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			CCD_Adjust_to_GPS(Corner_Point_CCD_Line[1 - 1],Back,Right,task2_Aim_Point[1 - 1].aim_position);
+			
+			aim_line_point = task2_Take_Point[1 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,8);
+			CCD_Adjust_to_GPS_Y(task2_Take_Point_CCD_Line[1 - 1],Left,task2_Take_Point[1 - 1].aim_position);
+			
+			
 			break;
 		case 'k':
+			LCD_printf(0,6+36*8,300,24,24,"Black Black	  		");
+			
+			set_loc[0] = 400000;
+			set_loc[1] = PanTilt_Zero;
 			task2_Black_Mask = 1;
+		
+			aim_line_point = task2_Take_Point[2 - 1];
+			aim_line_point.speed_max = 100;
+			aim_line_point.aim_position.x = GPS_List[0].position.x;
+			aim_line_point.aim_position.y = GPS_List[0].position.y - 70;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			delay_ms(50);
+			
+			aim_line_point.aim_position.x = GPS_List[0].position.x + 400; //避开放置区
+			aim_line_point.aim_position.y = GPS_List[0].position.y;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+		
+			aim_line_point = task2_Take_Point[2 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,5);
+			
+			CCD_Adjust_to_GPS_Y(task2_Take_Point_CCD_Line[2 - 1],Right,task2_Take_Point[2 - 1].aim_position);
+			
+			pos_Put();
+			//回
+			set_loc[0] = 490000;
+			set_loc[1] = PanTilt_Zero - 1024;
+			
+			aim_line_point.speed_max = 100;
+			aim_line_point.aim_position.x = GPS_List[0].position.x;
+			aim_line_point.aim_position.y = GPS_List[0].position.y - 70;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			delay_ms(50);
+			
+			aim_line_point.aim_position.x = GPS_List[0].position.x - 400; //避开放置区
+			aim_line_point.aim_position.y = GPS_List[0].position.y;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			aim_line_point = task2_Aim_Point[1 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			CCD_Adjust_to_GPS(Corner_Point_CCD_Line[1 - 1],Back,Right,task2_Aim_Point[1 - 1].aim_position);
+			
+			aim_line_point = task2_Take_Point[1 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,8);
+			CCD_Adjust_to_GPS_Y(task2_Take_Point_CCD_Line[1 - 1],Left,task2_Take_Point[1 - 1].aim_position);
+			
 			break;
 		default:
 			break;
+	}
+	aim_line_point = task2_Take_Point_Offset[1 - 1];
+	aim_line_point.aim_position.x = GPS_List[0].position.x + task2_Take_Point_Offset[1 - 1].aim_position.x;
+	aim_line_point.aim_position.y = GPS_List[0].position.y + task2_Take_Point_Offset[1 - 1].aim_position.y;
+	
+	Return_Any_Point(&aim_line_point,5.0,1.0,5);
+	
+	pos_Grab();
+	
+	USART_SendByte(USART2, 0x73);
+	while(!Is_Color_Finished);
+	Is_Color_Finished = 0;
+	
+	switch(Color_Res[6 - 1])//B
+	{
+		case 'w':
+			LCD_printf(0,6+36*8,300,24,24,"White White		");
+			set_loc[0] = 400000;
+			set_loc[1] = PanTilt_Zero + 1024*2;
+			aim_line_point = task2_Aim_Point[1 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+		
+			CCD_Adjust_to_GPS(Corner_Point_CCD_Line[1 - 1],Back,Right,task2_Aim_Point[1 - 1].aim_position);
+			
+			aim_line_point = task2_Aim_Point_Offset[1 - 1];
+			aim_line_point.aim_position.x = GPS_List[0].position.x + task2_Aim_Point_Offset[1 - 1].aim_position.x;
+			aim_line_point.aim_position.y = GPS_List[0].position.y;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			//可以加CCD校准
+			pos_Put();
+			//回程
+			set_loc[0] = 490000;
+			set_loc[1] = PanTilt_Zero + 1024;
+			aim_line_point = task2_Take_Point[1 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,8);
+			CCD_Adjust_to_GPS_Y(task2_Take_Point_CCD_Line[1 - 1],Left,task2_Take_Point[1 - 1].aim_position);
+		
+			break;
+		case 'b':
+			LCD_printf(0,6+36*8,300,24,24,"Blue Blue		");
+			set_loc[0] = 400000;
+			set_loc[1] = PanTilt_Zero + 1024*4;
+			aim_line_point = task2_Middle_Point[1 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			CCD_Adjust_to_GPS_Y(task2_Middle_Point_CCD_Line[1 - 1],Right,task2_Middle_Point[1 - 1].aim_position);
+			
+			aim_line_point = task2_Aim_Point[4 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+		
+			CCD_Adjust_to_GPS(Corner_Point_CCD_Line[4 - 1],Front,Right,task2_Aim_Point[4 - 1].aim_position);
+			
+			aim_line_point = task2_Aim_Point_Offset[4 - 1];
+			aim_line_point.aim_position.x =	GPS_List[0].position.x;
+			aim_line_point.aim_position.y = GPS_List[0].position.y + task2_Aim_Point_Offset[4 - 1].aim_position.y;
+			
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			pos_Put();
+			//回
+			set_loc[0] = 490000;
+			set_loc[1] = PanTilt_Zero + 1024;
+			aim_line_point = task2_Middle_Point[1 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			CCD_Adjust_to_GPS_Y(task2_Middle_Point_CCD_Line[1 - 1],Right,task2_Middle_Point[1 - 1].aim_position);
+			
+			aim_line_point = task2_Take_Point[1 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,10);
+			CCD_Adjust_to_GPS_Y(task2_Take_Point_CCD_Line[1 - 1],Left,task2_Take_Point[1 - 1].aim_position);
+			break;
+		case 'r':
+			LCD_printf(0,6+36*8,300,24,24,"Red Red	  		");
+			set_loc[0] = 400000;
+			set_loc[1] = PanTilt_Zero + 1024*6;
+		
+			aim_line_point = task2_Aim_Point[2 - 1];
+			aim_line_point.speed_max = 100;
+			aim_line_point.aim_position.x = GPS_List[0].position.x;
+			aim_line_point.aim_position.y = GPS_List[0].position.y - 70;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			aim_line_point.aim_position.x = GPS_List[0].position.x + 400; //避开放置区
+			aim_line_point.aim_position.y = GPS_List[0].position.y;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			aim_line_point = task2_Aim_Point[2 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+		
+			CCD_Adjust_to_GPS(Corner_Point_CCD_Line[2 - 1],Back,Left,task2_Aim_Point[2 - 1].aim_position);
+			
+			aim_line_point = task2_Aim_Point_Offset[2 - 1];
+		
+			aim_line_point.aim_position.x = GPS_List[0].position.x + task2_Aim_Point_Offset[2 - 1].aim_position.x;
+			aim_line_point.aim_position.y = GPS_List[0].position.y;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			pos_Put(); 
+			//回
+			set_loc[0] = 490000;
+			set_loc[1] = PanTilt_Zero + 1024;
+			aim_line_point = task2_Take_Point[2 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			CCD_Adjust_to_GPS_Y(task2_Take_Point_CCD_Line[2 - 1],Right,task2_Take_Point[2 - 1].aim_position);
+			
+			
+			aim_line_point = task2_Take_Point_Offset[2 - 1];
+			aim_line_point.aim_position.x = GPS_List[0].position.x + task2_Take_Point_Offset[2 - 1].aim_position.x;
+			aim_line_point.aim_position.y = GPS_List[0].position.y + task2_Take_Point_Offset[2 - 1].aim_position.y;
+			Return_Any_Point(&aim_line_point,5.0,1.0,5);
+			
+			break;
+		case 'g':
+			LCD_printf(0,6+36*8,300,24,24,"Green Green	  		");
+			set_loc[0] = 400000;
+			set_loc[1] = PanTilt_Zero + 1024*4;
+			aim_line_point = task2_Middle_Point[3 - 1];
+			aim_line_point.speed_max = 100;
+			aim_line_point.aim_position.x = GPS_List[0].position.x;
+			aim_line_point.aim_position.y = GPS_List[0].position.y - 70;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			aim_line_point.aim_position.x = GPS_List[0].position.x + 400; //避开放置区
+			aim_line_point.aim_position.y = GPS_List[0].position.y;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+		
+			aim_line_point = task2_Middle_Point[3 - 1]; 
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			CCD_Adjust_to_GPS_Y(task2_Middle_Point_CCD_Line[3 - 1],Left,task2_Middle_Point[3 - 1].aim_position);
+			
+			aim_line_point = task2_Aim_Point[3 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+		
+			CCD_Adjust_to_GPS(Corner_Point_CCD_Line[3 - 1],Front,Left,task2_Aim_Point[3 - 1].aim_position);
+			
+			aim_line_point = task2_Aim_Point_Offset[3 - 1];
+		
+			aim_line_point.aim_position.x = GPS_List[0].position.x;
+			aim_line_point.aim_position.y = GPS_List[0].position.y + task2_Aim_Point_Offset[3 - 1].aim_position.y;
+			
+			Return_Any_Point(&aim_line_point,10.0,1.0,7); 
+			pos_Put();
+			
+			//回
+			set_loc[0] = 490000;
+			set_loc[1] = PanTilt_Zero + 1024;
+			aim_line_point = task2_Middle_Point[3 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7); 
+			
+			CCD_Adjust_to_GPS_Y(task2_Middle_Point_CCD_Line[3 - 1],Left,task2_Middle_Point[3 - 1].aim_position);
+			
+			if(Color_Res[5 - 1] != 'r')
+			{
+				aim_line_point = task2_Aim_Point[2 - 1];
+				Return_Any_Point(&aim_line_point,10.0,1.0,7);
+				CCD_Adjust_to_GPS(Corner_Point_CCD_Line[2 - 1],Back,Left,task2_Aim_Point[2 - 1].aim_position);
+			}
+			aim_line_point = task2_Take_Point[2 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			aim_line_point = task2_Take_Point_Offset[2 - 1];
+			aim_line_point.aim_position.x = GPS_List[0].position.x + task2_Take_Point_Offset[2 - 1].aim_position.x;
+			aim_line_point.aim_position.y = GPS_List[0].position.y + task2_Take_Point_Offset[2 - 1].aim_position.y;
+			Return_Any_Point(&aim_line_point,5.0,1.0,5);
+			
+			break;
+		case 'k':
+			LCD_printf(0,6+36*8,300,24,24,"Black Black	  		");
+		
+			set_loc[0] = 400000;
+			set_loc[1] = PanTilt_Zero;
+			task2_Black_Mask = 2;
+		
+			aim_line_point = task2_Take_Point[2 - 1];
+			aim_line_point.speed_max = 100;
+			aim_line_point.aim_position.x = GPS_List[0].position.x;
+			aim_line_point.aim_position.y = GPS_List[0].position.y - 50;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			delay_ms(50);
+			
+			aim_line_point.aim_position.x = GPS_List[0].position.x + 400; //避开放置区
+			aim_line_point.aim_position.y = GPS_List[0].position.y;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+		
+			aim_line_point = task2_Take_Point[2 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,5);
+			
+			CCD_Adjust_to_GPS_Y(task2_Take_Point_CCD_Line[2 - 1],Right,task2_Take_Point[2 - 1].aim_position);
+			
+			pos_Put();
+			//回
+			set_loc[0] = 490000;
+			set_loc[1] = PanTilt_Zero + 1024;
+			aim_line_point = task2_Take_Point_Offset[2 - 1];
+			aim_line_point.aim_position.x = GPS_List[0].position.x + task2_Take_Point_Offset[2 - 1].aim_position.x;
+			aim_line_point.aim_position.y = GPS_List[0].position.y + task2_Take_Point_Offset[2 - 1].aim_position.y;
+			
+			Return_Any_Point(&aim_line_point,5.0,1.0,5);
+			
+			break;
+		default:
+			break;
+	}
+	if(Color_Res[6 - 1] == 'w' || Color_Res[6 - 1] == 'b')
+	{
+		set_loc[0] = 490000;
+		set_loc[1] = PanTilt_Zero + 1024;
+		aim_line_point = task2_Take_Point_Offset[2 - 1];
+		aim_line_point.speed_max = 100;
+		aim_line_point.aim_position.x = GPS_List[0].position.x;
+		aim_line_point.aim_position.y = GPS_List[0].position.y - 70;
+		Return_Any_Point(&aim_line_point,5.0,1.0,5);
+		
+		aim_line_point.aim_position.x = GPS_List[0].position.x + 400;
+		aim_line_point.aim_position.y = GPS_List[0].position.y;
+		Return_Any_Point(&aim_line_point,5.0,1.0,5);
+		
+		aim_line_point = task2_Take_Point[2 - 1];
+		Return_Any_Point(&aim_line_point,5.0,1.0,5);
+		
+		CCD_Adjust_to_GPS_Y(task2_Take_Point_CCD_Line[2 - 1],Right,task2_Take_Point[2 - 1].aim_position);
+		
+		aim_line_point = task2_Take_Point_Offset[2 - 1];
+		aim_line_point.aim_position.x = GPS_List[0].position.x + task2_Take_Point_Offset[2 - 1].aim_position.x;
+		aim_line_point.aim_position.y = GPS_List[0].position.y + task2_Take_Point_Offset[2 - 1].aim_position.y;
+		Return_Any_Point(&aim_line_point,5.0,1.0,5);
+	}
+	pos_Grab();
+	
+	USART_SendByte(USART2, 0x73);
+	
+	while(!Is_Color_Finished);
+	Is_Color_Finished = 0;
+	
+	switch(Color_Res[7 - 1])//C
+	{
+		case 'w':
+			LCD_printf(0,6+36*8,300,24,24,"White White		");
+			set_loc[0] = 400000;
+			set_loc[1] = PanTilt_Zero + 1024*2;
+		
+			aim_line_point = task2_Aim_Point[1 - 1];
+			aim_line_point.speed_max = 100;
+			aim_line_point.aim_position.x = GPS_List[0].position.x;
+			aim_line_point.aim_position.y = GPS_List[0].position.y - 70;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			delay_ms(50);
+			aim_line_point.aim_position.x = GPS_List[0].position.x - 400; //避开放置区
+			aim_line_point.aim_position.y = GPS_List[0].position.y;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+		
+			aim_line_point = task2_Aim_Point[1 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+		
+			CCD_Adjust_to_GPS(Corner_Point_CCD_Line[1 - 1],Back,Right,task2_Aim_Point[1 - 1].aim_position);
+			
+			aim_line_point = task2_Aim_Point_Offset[1 - 1];
+			aim_line_point.aim_position.x = GPS_List[0].position.x + task2_Aim_Point_Offset[1 - 1].aim_position.x;
+			aim_line_point.aim_position.y = GPS_List[0].position.y;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			//可以加CCD校准
+			pos_Put();
+			//回程
+			set_loc[0] = 490000;
+			set_loc[1] = PanTilt_Zero + 1024;
+			aim_line_point = task2_Take_Point[1 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,8);
+			CCD_Adjust_to_GPS_Y(task2_Take_Point_CCD_Line[1 - 1],Left,task2_Take_Point[1 - 1].aim_position);
+			
+			aim_line_point = task2_Aim_Point[2 - 1];
+			aim_line_point.speed_max = 100;
+			aim_line_point.aim_position.x = GPS_List[0].position.x;
+			aim_line_point.aim_position.y = GPS_List[0].position.y - 70;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			aim_line_point.aim_position.x = GPS_List[0].position.x + 400; //避开放置区
+			aim_line_point.aim_position.y = GPS_List[0].position.y;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			aim_line_point = task2_Take_Point[2 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			CCD_Adjust_to_GPS_Y(task2_Take_Point_CCD_Line[2 - 1],Right,task2_Take_Point[2 - 1].aim_position);
+			break;
+		case 'b':
+			LCD_printf(0,6+36*8,300,24,24,"Blue Blue		");
+			set_loc[0] = 400000;
+			set_loc[1] = PanTilt_Zero + 1024*4;
+		
+			aim_line_point = task2_Aim_Point[1 - 1];
+			aim_line_point.speed_max = 100;
+			aim_line_point.aim_position.x = GPS_List[0].position.x;
+			aim_line_point.aim_position.y = GPS_List[0].position.y - 70;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			delay_ms(50);
+			aim_line_point.aim_position.x = GPS_List[0].position.x - 400; //避开放置区
+			aim_line_point.aim_position.y = GPS_List[0].position.y;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+		
+			aim_line_point = task2_Middle_Point[1 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			CCD_Adjust_to_GPS_Y(task2_Middle_Point_CCD_Line[1 - 1],Right,task2_Middle_Point[1 - 1].aim_position);
+			
+			aim_line_point = task2_Aim_Point[4 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+		
+			CCD_Adjust_to_GPS(Corner_Point_CCD_Line[4 - 1],Front,Right,task2_Aim_Point[4 - 1].aim_position);
+			
+			aim_line_point = task2_Aim_Point_Offset[4 - 1];
+			aim_line_point.aim_position.x =	GPS_List[0].position.x;
+			aim_line_point.aim_position.y = GPS_List[0].position.y + task2_Aim_Point_Offset[4 - 1].aim_position.y;
+			
+			Return_Any_Point(&aim_line_point,5.0,1.0,5);
+			
+			pos_Put();
+			//回
+			set_loc[0] = 490000;
+			set_loc[1] = PanTilt_Zero + 1024;
+			aim_line_point = task2_Middle_Point[1 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			CCD_Adjust_to_GPS_Y(task2_Middle_Point_CCD_Line[1 - 1],Right,task2_Middle_Point[1 - 1].aim_position);
+			
+			aim_line_point = task2_Take_Point[1 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,8);
+			CCD_Adjust_to_GPS_Y(task2_Take_Point_CCD_Line[1 - 1],Left,task2_Take_Point[1 - 1].aim_position);
+			
+			aim_line_point = task2_Aim_Point[2 - 1];
+			aim_line_point.speed_max = 100;
+			aim_line_point.aim_position.x = GPS_List[0].position.x;
+			aim_line_point.aim_position.y = GPS_List[0].position.y - 70;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			aim_line_point.aim_position.x = GPS_List[0].position.x + 400; //避开放置区
+			aim_line_point.aim_position.y = GPS_List[0].position.y;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			aim_line_point = task2_Take_Point[2 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			CCD_Adjust_to_GPS_Y(task2_Take_Point_CCD_Line[2 - 1],Right,task2_Take_Point[2 - 1].aim_position);
+			break;
+		case 'r':
+			LCD_printf(0,6+36*8,300,24,24,"Red Red	  		");
+			set_loc[0] = 400000;
+			set_loc[1] = PanTilt_Zero + 1024*6;
+			
+			aim_line_point = task2_Aim_Point[2 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+		
+			CCD_Adjust_to_GPS(Corner_Point_CCD_Line[2 - 1],Back,Left,task2_Aim_Point[2 - 1].aim_position);
+			
+			aim_line_point = task2_Aim_Point_Offset[2 - 1];
+		
+			aim_line_point.aim_position.x = GPS_List[0].position.x + task2_Aim_Point_Offset[2 - 1].aim_position.x;
+			aim_line_point.aim_position.y = GPS_List[0].position.y;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			pos_Put(); 
+			//回
+			set_loc[0] = 490000;
+			set_loc[1] = PanTilt_Zero + 1024;
+			aim_line_point = task2_Take_Point[2 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			CCD_Adjust_to_GPS_Y(task2_Take_Point_CCD_Line[2 - 1],Right,task2_Take_Point[2 - 1].aim_position);
+			break;
+		case 'g':
+			LCD_printf(0,6+36*8,300,24,24,"Green Green	  		");
+			set_loc[0] = 400000;
+			set_loc[1] = PanTilt_Zero + 1024*4;
+		
+			aim_line_point = task2_Middle_Point[3 - 1]; 
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			CCD_Adjust_to_GPS_Y(task2_Middle_Point_CCD_Line[3 - 1],Left,task2_Middle_Point[3 - 1].aim_position);
+			
+			aim_line_point = task2_Aim_Point[3 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+		
+			CCD_Adjust_to_GPS(Corner_Point_CCD_Line[3 - 1],Front,Left,task2_Aim_Point[3 - 1].aim_position);
+			
+			aim_line_point = task2_Aim_Point_Offset[3 - 1];
+		
+			aim_line_point.aim_position.x = GPS_List[0].position.x;
+			aim_line_point.aim_position.y = GPS_List[0].position.y + task2_Aim_Point_Offset[3 - 1].aim_position.y;
+			
+			Return_Any_Point(&aim_line_point,10.0,1.0,7); 
+			pos_Put();
+			
+			//回
+			set_loc[0] = 490000;
+			set_loc[1] = PanTilt_Zero + 1024;
+			aim_line_point = task2_Middle_Point[3 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7); 
+			
+			CCD_Adjust_to_GPS_Y(task2_Middle_Point_CCD_Line[3 - 1],Left,task2_Middle_Point[3 - 1].aim_position);
+			
+			if(Color_Res[5 - 1] != 'r' && Color_Res[6 - 1] != 'r')
+			{
+				aim_line_point = task2_Aim_Point[2 - 1];
+				Return_Any_Point(&aim_line_point,10.0,1.0,7);
+				CCD_Adjust_to_GPS(Corner_Point_CCD_Line[2 - 1],Back,Left,task2_Aim_Point[2 - 1].aim_position);
+			}
+			aim_line_point = task2_Take_Point[2 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			CCD_Adjust_to_GPS_Y(task2_Take_Point_CCD_Line[2 - 1],Right,task2_Take_Point[2 - 1].aim_position);
+			break;
+		case 'k':
+			LCD_printf(0,6+36*8,300,24,24,"Black Black	  		");
+		
+			set_loc[0] = 400000;
+			set_loc[1] = PanTilt_Zero;
+			task2_Black_Mask = 3;
+		
+			aim_line_point = task2_Take_Point[2 - 1];
+			Return_Any_Point(&aim_line_point,5.0,1.0,5);
+			CCD_Adjust_to_GPS_Y(task2_Take_Point_CCD_Line[2 - 1],Right,task2_Take_Point[2 - 1].aim_position);
+		
+			pos_Put();
+			
+			set_loc[0] = 490000;
+			set_loc[1] = PanTilt_Zero + 1024;
+			break;
+		default:
+			break;
+	}
+	pos_Grab();
+
+	USART_SendByte(USART2, 0x73);
+	while(!Is_Color_Finished);
+	Is_Color_Finished = 0;
+	
+	switch(Color_Res[8 - 1])//D
+		{
+		case 'w':
+			LCD_printf(0,6+36*8,300,24,24,"White White		");
+			set_loc[0] = 400000;
+			set_loc[1] = PanTilt_Zero + 1024*2;
+		
+			aim_line_point = task2_Aim_Point[1 - 1];
+			aim_line_point.speed_max = 100;
+			aim_line_point.aim_position.x = GPS_List[0].position.x;
+			aim_line_point.aim_position.y = GPS_List[0].position.y - 70;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			delay_ms(50);
+			aim_line_point.aim_position.x = GPS_List[0].position.x - 400; //避开放置区
+			aim_line_point.aim_position.y = GPS_List[0].position.y;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+		
+			aim_line_point = task2_Aim_Point[1 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+		
+			CCD_Adjust_to_GPS(Corner_Point_CCD_Line[1 - 1],Back,Right,task2_Aim_Point[1 - 1].aim_position);
+			
+			aim_line_point = task2_Aim_Point_Offset[1 - 1];
+			aim_line_point.aim_position.x = GPS_List[0].position.x + task2_Aim_Point_Offset[1 - 1].aim_position.x;
+			aim_line_point.aim_position.y = GPS_List[0].position.y;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			//可以加CCD校准
+			pos_Put();
+			//回程
+			set_loc[0] = 490000;
+			set_loc[1] = PanTilt_Zero + 1024;
+			aim_line_point = task2_Take_Point[1 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,8);
+			CCD_Adjust_to_GPS_Y(task2_Take_Point_CCD_Line[1 - 1],Left,task2_Take_Point[1 - 1].aim_position);
+			
+			aim_line_point = task2_Aim_Point[2 - 1];
+			aim_line_point.speed_max = 100;
+			aim_line_point.aim_position.x = GPS_List[0].position.x;
+			aim_line_point.aim_position.y = GPS_List[0].position.y - 70;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			aim_line_point.aim_position.x = GPS_List[0].position.x + 400; //避开放置区
+			aim_line_point.aim_position.y = GPS_List[0].position.y;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			aim_line_point = task2_Take_Point[2 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			CCD_Adjust_to_GPS_Y(task2_Take_Point_CCD_Line[2 - 1],Right,task2_Take_Point[2 - 1].aim_position);
+			break;
+		case 'b':
+			LCD_printf(0,6+36*8,300,24,24,"Blue Blue		");
+			set_loc[0] = 400000;
+			set_loc[1] = PanTilt_Zero + 1024*4;
+		
+			aim_line_point = task2_Aim_Point[1 - 1];
+			aim_line_point.speed_max = 100;
+			aim_line_point.aim_position.x = GPS_List[0].position.x;
+			aim_line_point.aim_position.y = GPS_List[0].position.y - 70;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			delay_ms(50);
+			aim_line_point.aim_position.x = GPS_List[0].position.x - 400; //避开放置区
+			aim_line_point.aim_position.y = GPS_List[0].position.y;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+		
+			aim_line_point = task2_Middle_Point[1 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			CCD_Adjust_to_GPS_Y(task2_Middle_Point_CCD_Line[1 - 1],Right,task2_Middle_Point[1 - 1].aim_position);
+			
+			aim_line_point = task2_Aim_Point[4 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+		
+			CCD_Adjust_to_GPS(Corner_Point_CCD_Line[4 - 1],Front,Right,task2_Aim_Point[4 - 1].aim_position);
+			
+			aim_line_point = task2_Aim_Point_Offset[4 - 1];
+			aim_line_point.aim_position.x =	GPS_List[0].position.x;
+			aim_line_point.aim_position.y = GPS_List[0].position.y + task2_Aim_Point_Offset[4 - 1].aim_position.y;
+			
+			Return_Any_Point(&aim_line_point,5.0,1.0,5);
+			
+			pos_Put();
+			//回
+			set_loc[0] = 490000;
+			set_loc[1] = PanTilt_Zero + 1024;
+			aim_line_point = task2_Middle_Point[1 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			CCD_Adjust_to_GPS_Y(task2_Middle_Point_CCD_Line[1 - 1],Right,task2_Middle_Point[1 - 1].aim_position);
+			
+			aim_line_point = task2_Take_Point[1 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,8);
+			CCD_Adjust_to_GPS_Y(task2_Take_Point_CCD_Line[1 - 1],Left,task2_Take_Point[1 - 1].aim_position);
+			
+			aim_line_point = task2_Aim_Point[2 - 1];
+			aim_line_point.speed_max = 100;
+			aim_line_point.aim_position.x = GPS_List[0].position.x;
+			aim_line_point.aim_position.y = GPS_List[0].position.y - 70;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			aim_line_point.aim_position.x = GPS_List[0].position.x + 400; //避开放置区
+			aim_line_point.aim_position.y = GPS_List[0].position.y;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			aim_line_point = task2_Take_Point[2 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			CCD_Adjust_to_GPS_Y(task2_Take_Point_CCD_Line[2 - 1],Right,task2_Take_Point[2 - 1].aim_position);
+			break;
+		case 'r':
+			LCD_printf(0,6+36*8,300,24,24,"Red Red	  		");
+			set_loc[0] = 400000;
+			set_loc[1] = PanTilt_Zero + 1024*6;
+			
+			aim_line_point = task2_Aim_Point[2 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+		
+			CCD_Adjust_to_GPS(Corner_Point_CCD_Line[2 - 1],Back,Left,task2_Aim_Point[2 - 1].aim_position);
+			
+			aim_line_point = task2_Aim_Point_Offset[2 - 1];
+		
+			aim_line_point.aim_position.x = GPS_List[0].position.x + task2_Aim_Point_Offset[2 - 1].aim_position.x;
+			aim_line_point.aim_position.y = GPS_List[0].position.y;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			pos_Put(); 
+			//回
+			set_loc[0] = 490000;
+			set_loc[1] = PanTilt_Zero + 1024;
+			aim_line_point = task2_Take_Point[2 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			CCD_Adjust_to_GPS_Y(task2_Take_Point_CCD_Line[2 - 1],Right,task2_Take_Point[2 - 1].aim_position);
+			break;
+		case 'g':
+			LCD_printf(0,6+36*8,300,24,24,"Green Green	  		");
+			set_loc[0] = 400000;
+			set_loc[1] = PanTilt_Zero + 1024*4;
+		
+			aim_line_point = task2_Middle_Point[3 - 1]; 
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			CCD_Adjust_to_GPS_Y(task2_Middle_Point_CCD_Line[3 - 1],Left,task2_Middle_Point[3 - 1].aim_position);
+			
+			aim_line_point = task2_Aim_Point[3 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+		
+			CCD_Adjust_to_GPS(Corner_Point_CCD_Line[3 - 1],Front,Left,task2_Aim_Point[3 - 1].aim_position);
+			
+			aim_line_point = task2_Aim_Point_Offset[3 - 1];
+		
+			aim_line_point.aim_position.x = GPS_List[0].position.x;
+			aim_line_point.aim_position.y = GPS_List[0].position.y + task2_Aim_Point_Offset[3 - 1].aim_position.y;
+			
+			Return_Any_Point(&aim_line_point,10.0,1.0,7); 
+			pos_Put();
+			
+			//回
+			set_loc[0] = 490000;
+			set_loc[1] = PanTilt_Zero + 1024;
+			aim_line_point = task2_Middle_Point[3 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7); 
+			
+			CCD_Adjust_to_GPS_Y(task2_Middle_Point_CCD_Line[3 - 1],Left,task2_Middle_Point[3 - 1].aim_position);
+			
+			if(Color_Res[5 - 1] != 'r' && Color_Res[6 - 1] != 'r' && Color_Res[7 - 1] != 'r')
+			{
+				aim_line_point = task2_Aim_Point[2 - 1];
+				Return_Any_Point(&aim_line_point,10.0,1.0,7);
+				CCD_Adjust_to_GPS(Corner_Point_CCD_Line[2 - 1],Back,Left,task2_Aim_Point[2 - 1].aim_position);
+			}
+			aim_line_point = task2_Take_Point[2 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			CCD_Adjust_to_GPS_Y(task2_Take_Point_CCD_Line[2 - 1],Right,task2_Take_Point[2 - 1].aim_position);
+			break;
+		case 'k':
+			LCD_printf(0,6+36*8,300,24,24,"Black Black	  		");
+		
+			set_loc[0] = 400000;
+			set_loc[1] = PanTilt_Zero;
+		
+			task2_Black_Mask = 4;
+			pos_Put();
+			
+			set_loc[0] = 490000;
+			set_loc[1] = PanTilt_Zero + 1024;
+	
+			break;
+		default:
+			break;
+	}
+	
+	aim_line_point = task2_Take_Point_Offset[3 - 1];
+	aim_line_point.aim_position.x = GPS_List[0].position.x + task2_Take_Point_Offset[3 - 1].aim_position.x;
+	aim_line_point.aim_position.y = GPS_List[0].position.y + task2_Take_Point_Offset[3 - 1].aim_position.y;
+	Return_Any_Point(&aim_line_point,5.0,1.0,5);
+	
+	pos_Grab();
+	
+	USART_SendByte(USART2, 0x73);
+	while(!Is_Color_Finished);
+	Is_Color_Finished = 0;
+	
+	switch(Color_Res[9 - 1])//E
+	{
+		case 'w':
+			LCD_printf(0,6+36*8,300,24,24,"White White		");
+			set_loc[0] = 400000;
+			set_loc[1] = PanTilt_Zero + 1024*2;
+		
+			aim_line_point = task2_Aim_Point[1 - 1];
+			aim_line_point.speed_max = 100;
+			aim_line_point.aim_position.x = GPS_List[0].position.x;
+			aim_line_point.aim_position.y = GPS_List[0].position.y - 120;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			delay_ms(50);
+			aim_line_point.aim_position.x = GPS_List[0].position.x - 400; //避开放置区
+			aim_line_point.aim_position.y = GPS_List[0].position.y;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+		
+			aim_line_point = task2_Aim_Point[1 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+		
+			CCD_Adjust_to_GPS(Corner_Point_CCD_Line[1 - 1],Back,Right,task2_Aim_Point[1 - 1].aim_position);
+			
+			aim_line_point = task2_Aim_Point_Offset[1 - 1];
+			aim_line_point.aim_position.x = GPS_List[0].position.x + task2_Aim_Point_Offset[1 - 1].aim_position.x;
+			aim_line_point.aim_position.y = GPS_List[0].position.y;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			//可以加CCD校准
+			pos_Put();
+			//回程
+			set_loc[0] = 490000;
+			set_loc[1] = PanTilt_Zero + 1024;
+			aim_line_point = task2_Take_Point[1 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,8);
+			CCD_Adjust_to_GPS_Y(task2_Take_Point_CCD_Line[1 - 1],Left,task2_Take_Point[1 - 1].aim_position);
+			
+			aim_line_point = task2_Take_Point[2 - 1];
+			aim_line_point.speed_max = 100;
+			aim_line_point.aim_position.x = GPS_List[0].position.x;
+			aim_line_point.aim_position.y = GPS_List[0].position.y - 90;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			aim_line_point.aim_position.x = GPS_List[0].position.x + 400; //避开放置区
+			aim_line_point.aim_position.y = GPS_List[0].position.y;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			aim_line_point = task2_Take_Point[2 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			CCD_Adjust_to_GPS_Y(task2_Take_Point_CCD_Line[2 - 1],Right,task2_Take_Point[2 - 1].aim_position);
+			break;
+		case 'b':
+			LCD_printf(0,6+36*8,300,24,24,"Blue Blue		");
+			set_loc[0] = 400000;
+			set_loc[1] = PanTilt_Zero + 1024*4;
+		
+			aim_line_point = task2_Aim_Point[1 - 1];
+			aim_line_point.speed_max = 100;
+			aim_line_point.aim_position.x = GPS_List[0].position.x;
+			aim_line_point.aim_position.y = GPS_List[0].position.y - 120;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			delay_ms(50);
+			aim_line_point.aim_position.x = GPS_List[0].position.x - 400; //避开放置区
+			aim_line_point.aim_position.y = GPS_List[0].position.y;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+		
+			aim_line_point = task2_Middle_Point[1 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			CCD_Adjust_to_GPS_Y(task2_Middle_Point_CCD_Line[1 - 1],Right,task2_Middle_Point[1 - 1].aim_position);
+			
+			aim_line_point = task2_Aim_Point[4 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+		
+			CCD_Adjust_to_GPS(Corner_Point_CCD_Line[4 - 1],Front,Right,task2_Aim_Point[4 - 1].aim_position);
+			
+			aim_line_point = task2_Aim_Point_Offset[4 - 1];
+			aim_line_point.aim_position.x =	GPS_List[0].position.x;
+			aim_line_point.aim_position.y = GPS_List[0].position.y + task2_Aim_Point_Offset[4 - 1].aim_position.y;
+			
+			Return_Any_Point(&aim_line_point,5.0,1.0,5);
+			
+			pos_Put();
+			//回
+			set_loc[0] = 490000;
+			set_loc[1] = PanTilt_Zero + 1024;
+			aim_line_point = task2_Middle_Point[1 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			CCD_Adjust_to_GPS_Y(task2_Middle_Point_CCD_Line[1 - 1],Right,task2_Middle_Point[1 - 1].aim_position);
+			
+			aim_line_point = task2_Take_Point[1 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,8);
+			CCD_Adjust_to_GPS_Y(task2_Take_Point_CCD_Line[1 - 1],Left,task2_Take_Point[1 - 1].aim_position);
+			
+			aim_line_point = task2_Aim_Point[2 - 1];
+			aim_line_point.speed_max = 100;
+			aim_line_point.aim_position.x = GPS_List[0].position.x;
+			aim_line_point.aim_position.y = GPS_List[0].position.y - 70;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			aim_line_point.aim_position.x = GPS_List[0].position.x + 400; //避开放置区
+			aim_line_point.aim_position.y = GPS_List[0].position.y;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			aim_line_point = task2_Take_Point[2 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			CCD_Adjust_to_GPS_Y(task2_Take_Point_CCD_Line[2 - 1],Right,task2_Take_Point[2 - 1].aim_position);
+			break;
+		case 'r':
+			LCD_printf(0,6+36*8,300,24,24,"Red Red	  		");
+			set_loc[0] = 400000;
+			set_loc[1] = PanTilt_Zero + 1024*6;
+			
+			aim_line_point = task2_Aim_Point[2 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+		
+			CCD_Adjust_to_GPS(Corner_Point_CCD_Line[2 - 1],Back,Left,task2_Aim_Point[2 - 1].aim_position);
+			
+			aim_line_point = task2_Aim_Point_Offset[2 - 1];
+		
+			aim_line_point.aim_position.x = GPS_List[0].position.x + task2_Aim_Point_Offset[2 - 1].aim_position.x;
+			aim_line_point.aim_position.y = GPS_List[0].position.y;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			pos_Put(); 
+			//回
+			set_loc[0] = 490000;
+			set_loc[1] = PanTilt_Zero + 1024;
+			aim_line_point = task2_Take_Point[2 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			CCD_Adjust_to_GPS_Y(task2_Take_Point_CCD_Line[2 - 1],Right,task2_Take_Point[2 - 1].aim_position);
+			break;
+		case 'g':
+			LCD_printf(0,6+36*8,300,24,24,"Green Green	  		");
+			set_loc[0] = 400000;
+			set_loc[1] = PanTilt_Zero + 1024*4;
+		
+			aim_line_point = task2_Middle_Point[3 - 1]; 
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			CCD_Adjust_to_GPS_Y(task2_Middle_Point_CCD_Line[3 - 1],Left,task2_Middle_Point[3 - 1].aim_position);
+			
+			aim_line_point = task2_Aim_Point[3 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+		
+			CCD_Adjust_to_GPS(Corner_Point_CCD_Line[3 - 1],Front,Left,task2_Aim_Point[3 - 1].aim_position);
+			
+			aim_line_point = task2_Aim_Point_Offset[3 - 1];
+		
+			aim_line_point.aim_position.x = GPS_List[0].position.x;
+			aim_line_point.aim_position.y = GPS_List[0].position.y + task2_Aim_Point_Offset[3 - 1].aim_position.y;
+			
+			Return_Any_Point(&aim_line_point,10.0,1.0,7); 
+			pos_Put();
+			
+			//回
+			set_loc[0] = 490000;
+			set_loc[1] = PanTilt_Zero + 1024;
+			aim_line_point = task2_Middle_Point[3 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7); 
+			
+			CCD_Adjust_to_GPS_Y(task2_Middle_Point_CCD_Line[3 - 1],Left,task2_Middle_Point[3 - 1].aim_position);
+			
+			if(Color_Res[5 - 1] != 'r' && 
+				Color_Res[6 - 1] != 'r' && 
+				 Color_Res[7 - 1] != 'r' && 
+				  Color_Res[8 - 1] != 'r')
+			{
+				aim_line_point = task2_Aim_Point[2 - 1];
+				Return_Any_Point(&aim_line_point,10.0,1.0,7);
+				CCD_Adjust_to_GPS(Corner_Point_CCD_Line[2 - 1],Back,Left,task2_Aim_Point[2 - 1].aim_position);
+			}
+			
+			aim_line_point = task2_Take_Point[2 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			CCD_Adjust_to_GPS_Y(task2_Take_Point_CCD_Line[2 - 1],Right,task2_Take_Point[2 - 1].aim_position);
+			
+			break;
+		case 'k':
+			LCD_printf(0,6+36*8,300,24,24,"Black Black	  		");
+			task2_Black_Mask = 5;
+			
+			aim_line_point = task2_Middle_Point[3 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			CCD_Adjust_to_GPS_Y(task2_Middle_Point_CCD_Line[3 - 1],Left,task2_Middle_Point[3 - 1].aim_position);
+		
+			aim_line_point = task2_Middle_Point[2 - 1];
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			CCD_Adjust_to_GPS_X(task2_Middle_Point_CCD_Line[2 - 1],Front,task2_Middle_Point[2 - 1].aim_position);
+		
+			aim_line_point.aim_position.x = 0;
+			aim_line_point.aim_position.y = -150.0;
+			Return_Any_Point(&aim_line_point,5.0,1.0,5);
+			break;
+		default:
+			break;
+	}
+	if(task2_Black_Mask != 5) // 黑色&返回
+	{
+		set_loc[0] = 400000;
+		set_loc[1] = PanTilt_Zero;
+		delay_ms(500);
+		
+		pos_Grab();
+		
+		aim_line_point = task2_Middle_Point[3 - 1];
+		Return_Any_Point(&aim_line_point,10.0,1.0,7);
+		CCD_Adjust_to_GPS_Y(task2_Middle_Point_CCD_Line[3 - 1],Left,task2_Middle_Point[3 - 1].aim_position);
+	
+		aim_line_point = task2_Middle_Point[2 - 1];
+		Return_Any_Point(&aim_line_point,10.0,1.0,7);
+		CCD_Adjust_to_GPS_X(task2_Middle_Point_CCD_Line[2 - 1],Front,task2_Middle_Point[2 - 1].aim_position);
+	
+		aim_line_point.aim_position.x = 0;
+		aim_line_point.aim_position.y = -150.0;
+		Return_Any_Point(&aim_line_point,5.0,1.0,5);
 	}
 	/*
 	aim_line_point = task2_Take_Point_Offset[0];
@@ -6797,7 +7773,7 @@ void process_Task_2(void)
 	aim_line_point = task2_Take_Point[2 - 1];
 	Return_Any_Point(&aim_line_point,10.0,1.0,5);
 	
-	set_loc[0] = 500000;
+	set_loc[0] = 490000;
 	set_loc[1] = PanTilt_Zero + 1024;
 	CCD_Adjust_to_GPS_Y(task2_Take_Point_CCD_Line[2 - 1],Right,task2_Take_Point[2 - 1].aim_position);
 	

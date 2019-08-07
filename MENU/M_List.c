@@ -59,9 +59,9 @@ struct M_Type M_Process[M_NUM]=
 //	{"2.All",           M_UFunc,                process_All,        {MainMenu, NULL} },
 //	{"3.Auto_RGB",      M_UFunc,                process_Auto_RGB,   {MainMenu, NULL} },
 //	{"4.CCD_Auto_RGB",  M_UFunc,                process_CCD_Auto_RGB,{MainMenu, NULL} },
-	{"5.Point_Test",    M_UFunc,                process_Point_Test, {MainMenu, NULL} },
-	{"6.My_Test", 		M_UFunc,                process_My_Test,	{MainMenu, NULL} },
-	{"7.Task_2",        M_UFunc,                process_Task_2,     {MainMenu, NULL} },
+	{"5.Point_Test	",  M_UFunc,                process_Point_Test, {MainMenu, NULL} },
+	{"6.My_Test		",  M_UFunc,                process_My_Test,	{MainMenu, NULL} },
+	{"7.Task_2		",  M_UFunc,                process_Task_2,     {MainMenu, NULL} },
 	{" ",               M_Empty,                NULL,               {MainMenu, NULL} },
 };
 

@@ -424,7 +424,7 @@ void TSL1401_Edge_Detect(void)	//对应方向:0:成功,1:检测到全都为线,2:检测到全都为
 					break;
 				}
 			}
-			for (i = TSL1401_ADC_Buffer_Size - 5 - 5 - 1 - 10; i >= 5; --i)
+			for (i = TSL1401_ADC_Buffer_Size - 5 - 5 - 1 - 10; i >= 5 + 5; --i)
 			{
 				if (TSL1401_ADC_Buffer[i][j] <= ptr->Line_ADC_Threshold && 
 					TSL1401_ADC_Buffer[i+1][j] <= ptr->Line_ADC_Threshold && 

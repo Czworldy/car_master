@@ -400,8 +400,9 @@ void CCD_Adjust_to_GPS_X(struct CCD_Line ccd_line, uint8_t ccdx, struct Point st
 		LCD_printf(0,6+36*4,300,24,24,"Left pos:%u			",TSL1401_State[ccdx].Line_Edge_Left_Pos);
 		LCD_printf(0,6+36*5,300,24,24,"Right pos:%u			",TSL1401_State[ccdx].Line_Edge_Right_Pos);
 		
-		is_key = keyScan(1);
-
+		//is_key = keyScan(1);
+		
+		is_key = 1;
 		if (is_key)
 		{
 			is_key = 0;
@@ -458,8 +459,8 @@ void CCD_Adjust_to_GPS_X(struct CCD_Line ccd_line, uint8_t ccdx, struct Point st
 		LCD_printf(0,6+36*4,300,24,24,"Left pos:%u			",TSL1401_State[ccdx].Line_Edge_Left_Pos);
 		LCD_printf(0,6+36*5,300,24,24,"Right pos:%u			",TSL1401_State[ccdx].Line_Edge_Right_Pos);
 		
-		is_key = keyScan(1);
-
+		//is_key = keyScan(1);
+		is_key = 1;
 		if (is_key)
 		{
 			is_key = 0;
@@ -521,8 +522,8 @@ void CCD_Adjust_to_GPS_Y(struct CCD_Line ccd_line, uint8_t ccdy, struct Point st
 		LCD_printf(0,6+36*4,300,24,24,"Left pos:%u			",TSL1401_State[ccdy].Line_Edge_Left_Pos);
 		LCD_printf(0,6+36*5,300,24,24,"Right pos:%u			",TSL1401_State[ccdy].Line_Edge_Right_Pos);
 		
-		is_key = keyScan(1);
-
+		//is_key = keyScan(1);
+		is_key = 1;
 		if (is_key)
 		{
 			is_key = 0;
@@ -579,8 +580,9 @@ void CCD_Adjust_to_GPS_Y(struct CCD_Line ccd_line, uint8_t ccdy, struct Point st
 		LCD_printf(0,6+36*4,300,24,24,"Left pos:%u			",TSL1401_State[ccdy].Line_Edge_Left_Pos);
 		LCD_printf(0,6+36*5,300,24,24,"Right pos:%u			",TSL1401_State[ccdy].Line_Edge_Right_Pos);
 		
-		is_key = keyScan(1);
-
+		//is_key = keyScan(1);
+		
+		is_key = 1;
 		if (is_key)
 		{
 			is_key = 0;
