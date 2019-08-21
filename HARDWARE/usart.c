@@ -831,10 +831,9 @@ void USART2_DMA_RX_IRQHandler(void)
 #else
 
 u8 color_cnt = 0;
-u8 color_Detect_Cnt = 4;
+u8 color_Detect_Cnt = 0;
 void USART2_IRQHandler(void)
 {
-	
 	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET)
 	{
 		Camera_RxBuffer[3] = Camera_RxBuffer[2];

@@ -16,7 +16,7 @@ int main(void)
 	
 	
 	//Handle_USART_DMA_EN();
-	GPS_USART_DMA_EN();
+	 GPS_USART_DMA_EN();
 	//Color_USART_DMA_EN();
 	
 	TSL1401_Init();
@@ -48,7 +48,9 @@ int main(void)
 		{
 			LCD_printf(0,6+36*4,300,24,24,"Raspberry Pi OK");
 		}
+		
 		is_key =keyScan(MAINMENU);
+		
 		if (is_key)
 		{
 			is_key = 0;

@@ -62,6 +62,9 @@ struct M_Type M_Process[M_NUM]=
 	{"5.Point_Test	",  M_UFunc,                process_Point_Test, {MainMenu, NULL} },
 	{"6.My_Test		",  M_UFunc,                process_My_Test,	{MainMenu, NULL} },
 	{"7.Task_2		",  M_UFunc,                process_Task_2,     {MainMenu, NULL} },
+	{"8.task1_put",     M_UFunc,                process_task1_put_test,               {MainMenu, NULL} },
+	{" ",               M_Empty,                NULL,               {MainMenu, NULL} },
+	{" ",               M_Empty,                NULL,               {MainMenu, NULL} },
 	{" ",               M_Empty,                NULL,               {MainMenu, NULL} },
 };
 

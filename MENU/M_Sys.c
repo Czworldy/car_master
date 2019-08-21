@@ -921,6 +921,7 @@ void sys_Measure(void)
 		LCD_printf(0,6+36*3,300,24,24,"4.X = %lf        ",GPS_List[0].position.x);
 		LCD_printf(0,6+36*4,300,24,24,"5.Y = %lf        ",GPS_List[0].position.y);
 		LCD_printf(0,6+36*5,300,24,24,"6.Grab:%s ",en == 1 ? "Enable" : "Disable");
+		LCD_printf(0,6+36*6,300,24,24,"7.set_loc:%lld ",set_loc[1]);
 		is_key = keyScan(ROWTYPE);
 		if(is_key == 1)
 		{

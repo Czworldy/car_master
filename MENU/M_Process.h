@@ -87,5 +87,6 @@ void process_CCD_Auto_RGB(void);
 void process_Point_Test(void);
 void process_My_Test(void);
 void process_Task_2(void);
+void process_task1_put_test(void);
 
 #endif

@@ -14,13 +14,13 @@ void Return_Any_Point(struct Line_Point *aim_line_point, double distance_err, do
 	{
 		GoLine();
 		
-		LCD_printf(0,6+36*0,300,24,24,"1.Angle =%lf     	   ",GPS_List[0].angle);
-		LCD_printf(0,6+36*1,300,24,24,"2.X =%lf     	   ",GPS_List[0].position.x);
-		LCD_printf(0,6+36*2,300,24,24,"3.Y =%lf 	       ",GPS_List[0].position.y);
-		
-		LCD_printf(0,6+36*3,300,24,24,"1.Angle =%lf        `",Aim_Line_Point.aim_radian);
-		LCD_printf(0,6+36*4,300,24,24,"2.Aim X =%lf        `",Aim_Line_Point.aim_position.x);
-		LCD_printf(0,6+36*5,300,24,24,"3.Aim Y =%lf        `",Aim_Line_Point.aim_position.y);
+//		LCD_printf(0,6+36*0,300,24,24,"1.Angle =%lf     	   ",GPS_List[0].angle);
+//		LCD_printf(0,6+36*1,300,24,24,"2.X =%lf     	   ",GPS_List[0].position.x);
+//		LCD_printf(0,6+36*2,300,24,24,"3.Y =%lf 	       ",GPS_List[0].position.y);
+//		
+//		LCD_printf(0,6+36*3,300,24,24,"1.Angle =%lf        `",Aim_Line_Point.aim_radian);
+//		LCD_printf(0,6+36*4,300,24,24,"2.Aim X =%lf        `",Aim_Line_Point.aim_position.x);
+//		LCD_printf(0,6+36*5,300,24,24,"3.Aim Y =%lf        `",Aim_Line_Point.aim_position.y);
 		
 		is_key = keyScan(1);
 		if (is_key)
@@ -212,6 +212,8 @@ void CCD_Adjust_to_GPS(struct CCD_Line ccd_line, uint8_t ccdx, uint8_t ccdy, str
 	u8 is_key = 0;
 	u8 ccd_adjustment_sign;
 	
+	//LCD_Clear(WHITE);
+	
 	TSL1401_SetEnabled(1);
 	
 	delay_ms(500);
@@ -363,16 +365,17 @@ void CCD_Adjust_to_GPS(struct CCD_Line ccd_line, uint8_t ccdx, uint8_t ccdy, str
 	TSL1401_SetEnabled(0);
 	if((TSL1401_State[ccdx].Line_Edge_Type != 0) || (TSL1401_State[ccdy].Line_Edge_Type != 0))
 	{	
-		LCD_printf(0,6+36*7,300,24,24,"CCD_Failed");
+		LCD_printf(0,6+36*8,300,24,24,"CCD_Failed %u %u",TSL1401_State[ccdx].Line_Edge_Type,TSL1401_State[ccdy].Line_Edge_Type);
 		return;
 	}			
 	aim_line_point = CCD_Adjustment;
 	aim_line_point.aim_position.x = GPS_List[0].position.x + (ccd_line.Line_Edge_Median_Pos[ccdx] - TSL1401_State[ccdx].Line_Edge_Median_Pos) * TSL1401_State[ccdx].Pixel_To_Distance;
 	aim_line_point.aim_position.y = GPS_List[0].position.y + (ccd_line.Line_Edge_Median_Pos[ccdy] - TSL1401_State[ccdy].Line_Edge_Median_Pos) * TSL1401_State[ccdy].Pixel_To_Distance;
 	
-	Return_Any_Point(&aim_line_point,5.0,1.0,3);
+	Return_Any_Point(&aim_line_point,5.0,0.7,3);
 	
 	GPS_Init(std_point.x, std_point.y);
+//	LCD_printf(0,6+36*8,300,24,24,"				");
 	delay_ms(200);
 }
 
@@ -638,7 +641,7 @@ struct Line_Point Color_Judge(void)
 			aim_line_point = Task_1_Put_Point_Offset[1 - 1];
 			aim_line_point.aim_position.x = Center_Point.aim_position.x + Task_1_Put_Point_Offset[1 - 1].aim_position.x;
 			aim_line_point.aim_position.y = Center_Point.aim_position.y + Task_1_Put_Point_Offset[1 - 1].aim_position.y;
-			set_loc[1] = PanTilt_Zero + 1024*2 + 20; 
+			set_loc[1] = PanTilt_Zero + 1024*2 +25;//+ 20; 
 			pos_Grab_cnt++;
 			Is_Color_Finished = 0;
 			Color_Res[0] = 0;
@@ -648,7 +651,7 @@ struct Line_Point Color_Judge(void)
 			aim_line_point = Task_1_Put_Point_Offset[2 - 1];
 			aim_line_point.aim_position.x = Center_Point.aim_position.x + Task_1_Put_Point_Offset[2 - 1].aim_position.x;
 			aim_line_point.aim_position.y = Center_Point.aim_position.y + Task_1_Put_Point_Offset[2 - 1].aim_position.y;
-			set_loc[1] = PanTilt_Zero + 1024*4 - 55;  
+			set_loc[1] = PanTilt_Zero + 1024*4 -65;// - 55;  
 			pos_Grab_cnt++;
 			Is_Color_Finished = 0;
 			Color_Res[0] = 0;
@@ -658,7 +661,7 @@ struct Line_Point Color_Judge(void)
 			aim_line_point = Task_1_Put_Point_Offset[3 - 1];
 			aim_line_point.aim_position.x = Center_Point.aim_position.x + Task_1_Put_Point_Offset[3 - 1].aim_position.x;
 			aim_line_point.aim_position.y = Center_Point.aim_position.y + Task_1_Put_Point_Offset[3 - 1].aim_position.y;
-			set_loc[1] = PanTilt_Zero + 1024*6; 
+			set_loc[1] = PanTilt_Zero + 1024*6 +20; 
 			pos_Grab_cnt++;
 			Is_Color_Finished = 0;
 			Color_Res[0] = 0;
@@ -668,7 +671,7 @@ struct Line_Point Color_Judge(void)
 			aim_line_point = Task_1_Put_Point_Offset[4 - 1];
 			aim_line_point.aim_position.x = Center_Point.aim_position.x + Task_1_Put_Point_Offset[4 - 1].aim_position.x;
 			aim_line_point.aim_position.y = Center_Point.aim_position.y + Task_1_Put_Point_Offset[4 - 1].aim_position.y;
-			set_loc[1] = PanTilt_Zero - 10; 
+			set_loc[1] = PanTilt_Zero +25; //- 10; 
 			pos_Grab_cnt++;
 			Is_Color_Finished = 0;
 			Color_Res[0] = 0;
@@ -692,7 +695,7 @@ struct Line_Point Color_Judge(void)
 				aim_line_point.aim_position.x = Center_Point.aim_position.x + Task_1_Put_Point_Offset[5 - 1].aim_position.x;
 				aim_line_point.aim_position.y = Center_Point.aim_position.y + Task_1_Put_Point_Offset[5 - 1].aim_position.y;
 				pos_Grab_cnt++; 
-				set_loc[1] = PanTilt_Zero + 1024*5 - 50; 
+				set_loc[1] = PanTilt_Zero + 1024*5 + 20; 
 				set_loc[0] = 500000;
 				last_Black = 1;
 				Is_Color_Finished = 0;
@@ -717,10 +720,15 @@ void pos_Grab(void)
 	delay_ms(500);
 	Cylinder = Cylin_Up;
 	delay_ms(1000);
+	//set_loc[0] = 300000;
 }
 
 void pos_Put(void)
 {
+	//set_loc[0] = 400000;
+	delay_ms(1000);
+	USART_SendByte(USART2, 0x53);
+	delay_ms(1500);
 	Cylinder = Cylin_Down;
 	delay_ms(1500);
 	delay_ms(1500);
@@ -728,6 +736,9 @@ void pos_Put(void)
 	Grab = Grab_Close;
 	delay_ms(1000);
 	Cylinder = Cylin_Up;
+	delay_ms(1500);
+	//delay_ms(500);
+	USART_SendByte(USART2, 0x53);
 	delay_ms(1000);
 }
 
