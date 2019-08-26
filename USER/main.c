@@ -32,10 +32,9 @@ int main(void)
 	PID_Init();
 	
 	CANx_Init();
+	set_loc[1] = PanTilt_Zero + 2*1024 - 8192;
 	
-	set_loc[1] = PanTilt_Zero;
-	//Servo_Original_Point_Bend();
-	USART_SendByte(USART2 , 'a');
+	Camera_Set_Mode(1);
 	while(1)
 	{
 		
@@ -49,7 +48,7 @@ int main(void)
 			LCD_printf(0,6+36*4,300,24,24,"Raspberry Pi OK");
 		}
 		
-		is_key =keyScan(MAINMENU);
+		is_key = keyScan(MAINMENU);
 		
 		if (is_key)
 		{

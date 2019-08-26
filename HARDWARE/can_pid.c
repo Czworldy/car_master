@@ -201,7 +201,7 @@ void PID_DJI_Handler(int i)
 			{	
 				Mode[1] = Speed_Mode;
 				if(error < 0)
-					set_spd[1] = 75;
+					set_spd[1] = 75;//75
 				else if(error > 0)
 					set_spd[1] = -75;
 			}

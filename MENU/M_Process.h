@@ -67,6 +67,8 @@ extern struct Line_Point Task_1_Put_Point_Offset[];
 extern struct Line_Point Center_Point;
 extern struct CCD_Line Corner_Point_CCD_Line[];
 
+extern u8 is_task_2;
+
 void process_Show_QR_Code(u16 x,u16 y,u8 num);
 void process_Line_Point(struct Line_Point *aim_line_point);
 void process_Line(void);

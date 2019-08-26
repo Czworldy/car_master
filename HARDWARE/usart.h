@@ -218,6 +218,10 @@ extern volatile u8 GPS_RxBuffer[];
 extern u8 GPS_TxBuffer[];
 extern u8 PanTilt_TxBuffer[];
 extern volatile u8 PanTilt_RxBuffer[];
+extern int8_t Circle_X;
+extern int8_t Circle_Y;
+extern int8_t Put_Circle_X;
+extern int8_t Put_Circle_Y;
 
 extern u8 WIFI_RxBuffer_Idx;
 

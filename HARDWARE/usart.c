@@ -7,6 +7,7 @@
 #include "qr_code.h"
 #include "handle.h"
 #include "key.h"
+#include "lcd.h"
 
 u8 Is_USART_Key_Receive = 0;
 
@@ -832,6 +833,15 @@ void USART2_DMA_RX_IRQHandler(void)
 
 u8 color_cnt = 0;
 u8 color_Detect_Cnt = 0;
+
+u8 circle_cnt = 0;
+int8_t Circle_X = 0;
+int8_t Circle_Y = 0;
+
+u8 put_circle_cnt = 0;
+int8_t Put_Circle_X = 0;
+int8_t Put_Circle_Y = 0;
+
 void USART2_IRQHandler(void)
 {
 	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET)
@@ -840,60 +850,97 @@ void USART2_IRQHandler(void)
 		Camera_RxBuffer[2] = Camera_RxBuffer[1];
 		Camera_RxBuffer[1] = Camera_RxBuffer[0];
 		Camera_RxBuffer[0] = USART2->DR;
-		if(Camera_RxBuffer[0] == 'b'||
-			Camera_RxBuffer[0] == 'r'||
-			 Camera_RxBuffer[0] == 'g'||
-			  Camera_RxBuffer[0] == 'k'||
-				Camera_RxBuffer[0] == 'w')
-			color_cnt++;
-		else
+		switch(Camera_Mode)
 		{
-			color_cnt = 0;
-			// Camera_RxBuffer[0] = Camera_RxBuffer[1] = Camera_RxBuffer[2] = Camera_RxBuffer[3] = 0x00;
-			return;
-		}
-		if(color_cnt < 4)
-			USART_SendByte(USART2, 0x73);
-		else if(color_cnt >= 4)
-		{
-			if(Camera_RxBuffer[0] == Camera_RxBuffer[1] && 
-			   Camera_RxBuffer[1] == Camera_RxBuffer[2] &&
-			   Camera_RxBuffer[2] == Camera_RxBuffer[3] )
-			{
-				switch (Camera_RxBuffer[0])
-				{	
-					case 'b':
-						Color_Res[color_Detect_Cnt++] = 'b';
-						Is_Color_Finished = 1;
-						break;
-					case 'r':
-						Color_Res[color_Detect_Cnt++] = 'r';
-						Is_Color_Finished = 1;
-						break;
-					case 'g':
-						Color_Res[color_Detect_Cnt++] = 'g';
-						Is_Color_Finished = 1;
-						break;
-					case 'w':
-						Color_Res[color_Detect_Cnt++] = 'w';
-						Is_Color_Finished = 1;
-						break;
-					case 'k':
-						Color_Res[color_Detect_Cnt++] = 'k';
-						Is_Color_Finished = 1;
-						break;
-					default:
-						USART_SendByte(USART2,0x73);//s
-						break;
+			case 2:
+				if(Camera_RxBuffer[0] == 'b'||
+					Camera_RxBuffer[0] == 'r'||
+					 Camera_RxBuffer[0] == 'g'||
+					  Camera_RxBuffer[0] == 'k'||
+						Camera_RxBuffer[0] == 'w')
+					color_cnt++;
+				else
+				{
+					color_cnt = 0;
+					// Camera_RxBuffer[0] = Camera_RxBuffer[1] = Camera_RxBuffer[2] = Camera_RxBuffer[3] = 0x00;
+					return;
 				}
-				color_cnt = 0;
-				USART_SendByte(USART2,'p');
-				Camera_RxBuffer[0] = Camera_RxBuffer[1] = Camera_RxBuffer[2] = Camera_RxBuffer[3] = 0x00;
-			}
-			else
-			{
-				USART_SendByte(USART2 , 0x73);
-			}
+				if(color_cnt < 4)
+					USART_SendByte(USART2, 0x21);
+				else if(color_cnt >= 4)
+				{
+					if(Camera_RxBuffer[0] == Camera_RxBuffer[1] && 
+					   Camera_RxBuffer[1] == Camera_RxBuffer[2] &&
+					   Camera_RxBuffer[2] == Camera_RxBuffer[3] )
+					{
+						switch (Camera_RxBuffer[0])
+						{	
+							case 'b':
+								Color_Res[color_Detect_Cnt++] = 'b';
+								Is_Color_Finished = 1;
+								break;
+							case 'r':
+								Color_Res[color_Detect_Cnt++] = 'r';
+								Is_Color_Finished = 1;
+								break;
+							case 'g':
+								Color_Res[color_Detect_Cnt++] = 'g';
+								Is_Color_Finished = 1;
+								break;
+							case 'w':
+								Color_Res[color_Detect_Cnt++] = 'w';
+								Is_Color_Finished = 1;
+								break;
+							case 'k':
+								Color_Res[color_Detect_Cnt++] = 'k';
+								Is_Color_Finished = 1;
+								break;
+							default:
+								USART_SendByte(USART2,0x21);//s
+								break;
+						}
+						Camera_Mode = 0xFF;
+						color_cnt = 0;
+						USART_SendByte(USART2,0x22);
+						Camera_RxBuffer[0] = Camera_RxBuffer[1] = Camera_RxBuffer[2] = Camera_RxBuffer[3] = 0x00;
+					}
+					else
+					{
+						USART_SendByte(USART2 , 0x21);
+					}
+				}
+				break;
+			case 3:
+				++circle_cnt; 
+				if(circle_cnt < 2)
+					return;
+				else if(circle_cnt == 2)
+				{
+					Camera_Mode = 0xFF;
+					circle_cnt = 0;
+					Circle_X = Camera_RxBuffer[1];
+					Circle_Y = Camera_RxBuffer[0];
+//					LCD_printf(0,6+36*8,300,24,24,"Circle_X:%d		",Circle_X);
+//					LCD_printf(0,6+36*9,300,24,24,"Circle_Y:%d		",Circle_Y);
+				}
+				
+				break;
+			case 4:
+				++put_circle_cnt;
+				if(put_circle_cnt < 2)
+					return;
+				else if(put_circle_cnt == 2)
+				{
+					Camera_Mode = 0xFF;
+					put_circle_cnt = 0;
+					Put_Circle_X = Camera_RxBuffer[1];
+					Put_Circle_Y = Camera_RxBuffer[0];
+//					LCD_printf(0,6+36*8,300,24,24,"Circle_X:%d		",Circle_X);
+//					LCD_printf(0,6+36*9,300,24,24,"Circle_Y:%d		",Circle_Y);
+				}
+				break;
+			default:
+				break;
 		}
 //		switch (Camera_Mode)
 //		{

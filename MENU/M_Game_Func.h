@@ -12,12 +12,15 @@ void CCD_Adjust_to_GPS_Y(struct CCD_Line ccd_line, uint8_t ccdy, struct Point st
 struct Line_Point Color_Judge(void);
 void pos_Grab(void);
 void pos_Put(void);
+void Camera_Cvt_GPS(u8 point, int8_t cam_x, int8_t cam_y);
+void Put_Camera_Cvt_GPS(u8 color, int8_t cam_x, int8_t cam_y);
 
 extern struct Line_Point Corner_Point[];
 extern u8 black_Mask;
 extern u8 is_This_Black_Noput;
 extern u8 pos_Grab_cnt;
 extern u8 last_Black;
+extern u8 is_put_balck;
 
 #endif
 
