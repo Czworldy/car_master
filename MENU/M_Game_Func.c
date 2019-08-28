@@ -672,7 +672,7 @@ struct Line_Point Color_Judge(void)
 			aim_line_point = Task_1_Put_Point_Offset[4 - 1];
 			aim_line_point.aim_position.x = Center_Point.aim_position.x + Task_1_Put_Point_Offset[4 - 1].aim_position.x;
 			aim_line_point.aim_position.y = Center_Point.aim_position.y + Task_1_Put_Point_Offset[4 - 1].aim_position.y;
-			set_loc[1] = PanTilt_Zero +25; //- 10; 
+			set_loc[1] = PanTilt_Zero + 25 + 25; //+25; 
 			pos_Grab_cnt++;
 			Is_Color_Finished = 0;
 			Color_Res[0] = 0;
@@ -973,9 +973,16 @@ void pos_Put(void)
 			Put_Camera_Cvt_GPS(temp,Put_Circle_X,Put_Circle_Y);
 		}
 		else
+		{
 			is_put_balck = 0;
+			delay_ms(500);
+		}
 	}
-	delay_ms(800);
+	else
+	{
+		delay_ms(500);
+	}
+	delay_ms(500);
 	Cylinder = Cylin_Down;
 	delay_ms(1500);
 	delay_ms(1500);

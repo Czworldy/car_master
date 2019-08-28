@@ -52,7 +52,7 @@
 #endif
 
 #ifdef BSP_USING_USART1
-	#define USART1_BAUDRATE                    115200
+	#define USART1_BAUDRATE                    19200
 
 	#define USART1_RX_GPIO_PORT                GPIOA
 	#define USART1_RX_GPIO_CLK                 RCC_AHB1Periph_GPIOA

@@ -37,7 +37,6 @@ int main(void)
 	Camera_Set_Mode(1);
 	while(1)
 	{
-		
 		if (Camera_RxBuffer[0] == 0xFF)
 		{
 			is_raspberry_pi_ok = 1;
@@ -47,9 +46,10 @@ int main(void)
 		{
 			LCD_printf(0,6+36*4,300,24,24,"Raspberry Pi OK");
 		}
-		
+	 	
 		is_key = keyScan(MAINMENU);
 		
+
 		if (is_key)
 		{
 			is_key = 0;
