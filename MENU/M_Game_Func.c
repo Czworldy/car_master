@@ -552,13 +552,13 @@ void CCD_Adjust_to_GPS_Y(struct CCD_Line ccd_line, uint8_t ccdy, struct Point st
 		case 1:
 			ccd_adjustment_sign &= ~(2 << 2);
 			ccd_adjustment_sign |= (1 << 2);
-			aim_line_point.aim_position.x = GPS_List[0].position.x + ccd_line.Line_Move_Offset[1].x;
+//			aim_line_point.aim_position.x = GPS_List[0].position.x + ccd_line.Line_Move_Offset[1].x;
 			SetLine(&aim_line_point);
 			break;
 		case 2:
 			ccd_adjustment_sign &= ~(2 << 2);
 			ccd_adjustment_sign |= (2 << 2);
-			aim_line_point.aim_position.y = GPS_List[0].position.y + ccd_line.Line_Move_Offset[1].y;
+//			aim_line_point.aim_position.y = GPS_List[0].position.y + ccd_line.Line_Move_Offset[1].y;
 			SetLine(&aim_line_point);
 			break;
 //		case 4:
@@ -569,7 +569,7 @@ void CCD_Adjust_to_GPS_Y(struct CCD_Line ccd_line, uint8_t ccdy, struct Point st
 	}
 	if (ccd_adjustment_sign)
 	{
-		Return_Any_Point(&aim_line_point,5.0,1.0,3);
+		Return_Any_Point(&aim_line_point,5.0,1.0,2);
 		
 		delay_ms(500);
 		while (!TSL1401_Cal_Ready);
@@ -919,14 +919,14 @@ void Put_Camera_Cvt_GPS(u8 dir, int8_t cam_x, int8_t cam_y)
 	
 	aim_line_point = Task_1_Put_Point_Offset[1 - 1];
 	aim_line_point.speed_max = 50;
-	aim_line_point.aim_position.x = GPS_List[0].position.x - cof*Cam_Offset.x;
-	aim_line_point.aim_position.y = GPS_List[0].position.y - cof*Cam_Offset.y;
+	aim_line_point.aim_position.x = GPS_List[0].position.x - Cam_Offset.x;
+	aim_line_point.aim_position.y = GPS_List[0].position.y - Cam_Offset.y;
 	if(sqrt(Cam_Offset.x*Cam_Offset.x + Cam_Offset.y*Cam_Offset.y) > 50)
 	{
 		LCD_printf(0,6+36*9,300,24,24,"!!!Camera Failed!!!");
 		return;
 	}
-	Return_Any_Point(&aim_line_point,5.0,1.0,3);
+	Return_Any_Point(&aim_line_point,3.0,1.0,2);
 }	
 
 void pos_Grab(void)
@@ -967,10 +967,10 @@ void pos_Put(void)
 		}
 		if(is_put_balck != 1)
 		{
-			delay_ms(1000);
+			delay_ms(1500);
 			Camera_Set_Mode(4);
-			delay_ms(1000);
-			Put_Camera_Cvt_GPS(temp,Put_Circle_X,Put_Circle_Y);
+			delay_ms(500);
+			 Put_Camera_Cvt_GPS(temp,Put_Circle_X,Put_Circle_Y);
 		}
 		else
 		{

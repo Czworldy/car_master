@@ -4,6 +4,7 @@
 #include "M_Sys.h"
 #include "M_Route.h"
 #include "M_Process.h"
+#include "GPS.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -24,7 +25,8 @@ struct M_Type MainMenu[M_NUM]=
 	{"3.Process",       M_SMenu,                NULL,               {MainMenu, M_Process} },
 //	{"4.Measure", 		M_UFunc,        		sys_Measure,        {MainMenu, NULL} },
 	{"4.Game Strat",    M_UFunc,                process_My_Test,    {MainMenu, NULL} },
-	{"version 2.0",     M_Empty,                NULL,               {MainMenu, NULL} },
+	{"5.GPS_Clear",     M_UFunc,                GPS_Clear,               {MainMenu, NULL} },
+//	{"version 2.0",     M_Empty,                NULL,               {MainMenu, NULL} },
 	{" ",               M_Empty,                NULL,               {MainMenu, NULL} },
 	{" ",               M_Empty,                NULL,               {MainMenu, NULL} },
 	{" ",               M_Empty,                NULL,               {MainMenu, NULL} },

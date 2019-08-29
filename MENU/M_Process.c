@@ -6439,7 +6439,7 @@ void nothing2()
 //offset 494.97
 
 struct Line_Point Task_1_Take_Point[4] = {
-	{{-354, 700+354}, 0, 40, 450, 40, -1, 2},//250
+	{{-354, 700+354 - 4}, 0, 40, 450, 40, -1, 2},//250 700+354
 	{{-359, 700-351}, 0, 40, 450, 40, -1, 2},
 	{{337, 700-357}, 0, 40, 450, 40, -1, 2},
 	{{342, 700+352}, 0, 40, 450, 40, -1, 2},
@@ -6457,7 +6457,7 @@ struct Line_Point Task_1_Put_Point_Offset[5] = {
 	{{0, -195}, 0, 40, 350, 40, -1, 2},//green
 	{{185, 0}, 0, 40, 350, 40, -1, 2},//red
 	{{0, 191}, 0, 40, 350, 40, -1, 2},//white
-	{{-175, 155}, 0, 40, 350, 40, -1, 2} //black
+	{{-175, 150}, 0, 40, 350, 40, -1, 2} //black//-175 155
 };
 
 struct Line_Point Center_Point =
@@ -6539,6 +6539,7 @@ void process_My_Test(void)
 	GPS_Clear();
 	delay_ms(50);
 	GPS_Clear();
+	delay_ms(50);
 	GPS_Init(0.0,-160.0);
 	
 	delay_ms(500);
@@ -6675,7 +6676,7 @@ struct CCD_Line Corner_Point_CCD_Line[4] ={//F//B//L//R
 
 struct CCD_Line task2_Take_Point_CCD_Line[2] = {
 	{{0, 0, 59, 0}, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}},
-	{{0, 0, 0, 60}, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}},
+	{{0, 0, 0, 67}, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}},//60 //63 向y+偏
 };//white
 
 struct Line_Point task2_Aim_Point_Offset[4] =  {
@@ -6694,13 +6695,13 @@ struct Line_Point task2_Middle_Point[4]	=  {
 
 struct CCD_Line task2_Middle_Point_CCD_Line[3] = {//F//B//L//R
 	{{0, 0, 0, 64}, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}},//left
-	{{45, 0, 0, 0}, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}},//middle
+	{{50, 0, 0, 0}, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}},//middle
 	{{0, 0, 64, 0}, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}},//right
 };
 struct CCD_Line task2_Middle_Point_X_CCD_Line[3] = {//F//B//L//R
 	{{69, 0, 0, 0}, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}},//left
 	{{64,64, 64,64},{{0, 0}, {0, 0}, {0, 0}, {0, 0}}},//null
-	{{64, 0, 0, 0}, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}},//right
+	{{56 , 0, 0, 0}, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}},//right //64 //60→
 };
 struct Line_Point task2_Middle_X_Point[3]	=  {
 	{{-700, 1050}, 0, 40, 300, 40, -1, 2},//left
@@ -6708,7 +6709,11 @@ struct Line_Point task2_Middle_X_Point[3]	=  {
 	{{700, 1050}, 0, 40, 300, 40, -1, 2},//right
 };
 
-
+struct Line_Point task2_Circle_Point[3]	=  {
+	{{-495, 700+495}, 0, 40, 300, 40, -1, 2},//left
+	{{700, 700}, 0, 40, 300, 40, -1, 2},//null
+	{{495, 700+495}, 0, 40, 300, 40, -1, 2},//right
+};
 u8 task2_Black_Mask = 0;
 u8 is_task_2 = 0;
 void process_Task_2(void)
@@ -6779,6 +6784,7 @@ void process_Task_2(void)
 			LCD_printf(0,6+36*8,300,24,24,"Blue Blue		");
 			set_loc[0] = 400000;
 			set_loc[1] = PanTilt_Zero + 1024*4;
+			Return_Any_Point(&task2_Circle_Point[1 - 1],10.0,1.0,6);
 			aim_line_point = task2_Middle_Point[1 - 1];
 			Return_Any_Point(&aim_line_point,10.0,1.0,7);
 			
@@ -6883,7 +6889,8 @@ void process_Task_2(void)
 			aim_line_point.aim_position.x = GPS_List[0].position.x + 400; //避开放置区
 			aim_line_point.aim_position.y = GPS_List[0].position.y;
 			Return_Any_Point(&aim_line_point,10.0,1.0,7);
-		
+			
+			Return_Any_Point(&task2_Circle_Point[3 - 1],10.0,1.0,6);
 			aim_line_point = task2_Middle_Point[3 - 1]; 
 			Return_Any_Point(&aim_line_point,10.0,1.0,7);
 			
@@ -7032,6 +7039,8 @@ void process_Task_2(void)
 			LCD_printf(0,6+36*8,300,24,24,"Blue Blue		");
 			set_loc[0] = 400000;
 			set_loc[1] = PanTilt_Zero + 1024*4;
+			
+			Return_Any_Point(&task2_Circle_Point[1 - 1],10.0,1.0,6);
 			aim_line_point = task2_Middle_Point[1 - 1];
 			Return_Any_Point(&aim_line_point,10.0,1.0,7);
 			
@@ -7135,7 +7144,8 @@ void process_Task_2(void)
 			aim_line_point.aim_position.x = GPS_List[0].position.x + 400; //避开放置区
 			aim_line_point.aim_position.y = GPS_List[0].position.y;
 			Return_Any_Point(&aim_line_point,10.0,1.0,7);
-		
+			
+			Return_Any_Point(&task2_Circle_Point[3 - 1],10.0,1.0,6);
 			aim_line_point = task2_Middle_Point[3 - 1]; 
 			Return_Any_Point(&aim_line_point,10.0,1.0,7);
 			
@@ -7329,7 +7339,8 @@ void process_Task_2(void)
 			aim_line_point.aim_position.x = GPS_List[0].position.x - 400; //避开放置区
 			aim_line_point.aim_position.y = GPS_List[0].position.y;
 			Return_Any_Point(&aim_line_point,10.0,1.0,7);
-		
+			
+			Return_Any_Point(&task2_Circle_Point[1 - 1],10.0,1.0,6);
 			aim_line_point = task2_Middle_Point[1 - 1];
 			Return_Any_Point(&aim_line_point,10.0,1.0,7);
 			
@@ -7423,7 +7434,8 @@ void process_Task_2(void)
 			LCD_printf(0,6+36*8,300,24,24,"Green Green	  		");
 			set_loc[0] = 400000;
 			set_loc[1] = PanTilt_Zero + 1024*4;
-		
+			
+			Return_Any_Point(&task2_Circle_Point[3 - 1],10.0,1.0,6);
 			aim_line_point = task2_Middle_Point[3 - 1]; 
 			Return_Any_Point(&aim_line_point,10.0,1.0,7);
 			
@@ -7569,7 +7581,8 @@ void process_Task_2(void)
 			aim_line_point.aim_position.x = GPS_List[0].position.x - 400; //避开放置区
 			aim_line_point.aim_position.y = GPS_List[0].position.y;
 			Return_Any_Point(&aim_line_point,10.0,1.0,7);
-		
+			
+			Return_Any_Point(&task2_Circle_Point[1 - 1],10.0,1.0,6);
 			aim_line_point = task2_Middle_Point[1 - 1];
 			Return_Any_Point(&aim_line_point,10.0,1.0,7);
 			
@@ -7664,7 +7677,8 @@ void process_Task_2(void)
 			LCD_printf(0,6+36*8,300,24,24,"Green Green	  		");
 			set_loc[0] = 400000;
 			set_loc[1] = PanTilt_Zero + 1024*4;
-		
+			
+			Return_Any_Point(&task2_Circle_Point[3 - 1],10.0,1.0,6);
 			aim_line_point = task2_Middle_Point[3 - 1]; 
 			Return_Any_Point(&aim_line_point,10.0,1.0,7);
 			
@@ -7810,7 +7824,8 @@ void process_Task_2(void)
 			aim_line_point.aim_position.x = GPS_List[0].position.x - 400; //避开放置区
 			aim_line_point.aim_position.y = GPS_List[0].position.y;
 			Return_Any_Point(&aim_line_point,10.0,1.0,7);
-		
+			
+			Return_Any_Point(&task2_Circle_Point[1 - 1],10.0,1.0,6);
 			aim_line_point = task2_Middle_Point[1 - 1];
 			Return_Any_Point(&aim_line_point,10.0,1.0,7);
 			
@@ -7905,7 +7920,8 @@ void process_Task_2(void)
 			LCD_printf(0,6+36*8,300,24,24,"Green Green	  		");
 			set_loc[0] = 400000;
 			set_loc[1] = PanTilt_Zero + 1024*4;
-		
+			
+			Return_Any_Point(&task2_Circle_Point[3 - 1],10.0,1.0,6);
 			aim_line_point = task2_Middle_Point[3 - 1]; 
 			Return_Any_Point(&aim_line_point,10.0,1.0,7);
 			
@@ -7963,23 +7979,36 @@ void process_Task_2(void)
 			
 			aim_line_point = task2_Middle_Point[3 - 1];
 			
-			aim_line_point.speed_max = 800;
-			aim_line_point.aim_position.x += 60; 
-			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			aim_line_point.speed_max = 400;
+//			aim_line_point.aim_position.x += 60; 
+			Return_Any_Point(&task2_Circle_Point[3 - 1], 10.0 , 1.0 , 6);
 			
 			//CCD_Adjust_to_GPS_Y(task2_Middle_Point_CCD_Line[3 - 1],Left,task2_Middle_Point[3 - 1].aim_position);
 		
 			set_loc[0] = 20000;
 		
+			aim_line_point = task2_Middle_Point[3 - 1];
+			aim_line_point.speed_max = 400;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			aim_line_point.aim_position.x = 495;
+			aim_line_point.aim_position.y = 205;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
 			aim_line_point = task2_Middle_Point[2 - 1];
-			aim_line_point.speed_max = 800;
+			aim_line_point.speed_max = 400;
 			Return_Any_Point(&aim_line_point,10.0,1.0,7);
 			CCD_Adjust_to_GPS_X(task2_Middle_Point_CCD_Line[2 - 1],Front,task2_Middle_Point[2 - 1].aim_position);
 		
 			aim_line_point.aim_position.x = 0;
-			aim_line_point.aim_position.y = -250.0;
+			aim_line_point.aim_position.y = -250.0;//-250.0
 			aim_line_point.speed_max = 200;
 			Return_Any_Point(&aim_line_point,10.0,1.0,5);
+			
+			set_loc[0] = 100000;
+			pos_Put();
+			delay_ms(500);
+			set_loc[0] = 20000;
 			break;
 		default:
 			break;
@@ -7993,21 +8022,54 @@ void process_Task_2(void)
 		pos_Grab();
 		
 		
-		aim_line_point = task2_Middle_Point[3 - 1];
-		aim_line_point.speed_max = 800;
-		aim_line_point.aim_position.x += 60;
-		Return_Any_Point(&aim_line_point,10.0,1.0,7);
-		//CCD_Adjust_to_GPS_Y(task2_Middle_Point_CCD_Line[3 - 1],Left,task2_Middle_Point[3 - 1].aim_position);
-		set_loc[0] = 20000;
-		aim_line_point = task2_Middle_Point[2 - 1];
-		aim_line_point.speed_max = 800;
-		Return_Any_Point(&aim_line_point,10.0,1.0,7);
-		CCD_Adjust_to_GPS_X(task2_Middle_Point_CCD_Line[2 - 1],Front,task2_Middle_Point[2 - 1].aim_position);
-	
-		aim_line_point.aim_position.x = 0;
-		aim_line_point.aim_position.y = -250.0;
-		aim_line_point.speed_max = 300;
-		Return_Any_Point(&aim_line_point,10.0,1.0,5);
+//		aim_line_point = task2_Middle_Point[3 - 1];
+//		aim_line_point.speed_max = 600;
+//		aim_line_point.aim_position.x += 60;
+//		Return_Any_Point(&aim_line_point,10.0,1.0,7);
+//		//CCD_Adjust_to_GPS_Y(task2_Middle_Point_CCD_Line[3 - 1],Left,task2_Middle_Point[3 - 1].aim_position);
+//		set_loc[0] = 20000;
+//		aim_line_point = task2_Middle_Point[2 - 1];
+//		aim_line_point.speed_max = 600;
+//		Return_Any_Point(&aim_line_point,10.0,1.0,7);
+//		CCD_Adjust_to_GPS_X(task2_Middle_Point_CCD_Line[2 - 1],Front,task2_Middle_Point[2 - 1].aim_position);
+//	
+//		aim_line_point.aim_position.x = 0;
+//		aim_line_point.aim_position.y = -220.0;//-250.0
+//		aim_line_point.speed_max = 300;
+//		Return_Any_Point(&aim_line_point,10.0,1.0,5);
+			//set_loc[1] = PanTilt_Zero;
+			Return_Any_Point(&task2_Circle_Point[3 - 1], 10.0 , 1.0 , 6);
+		
+			aim_line_point = task2_Middle_Point[3 - 1];
+			aim_line_point.speed_max = 400;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			//CCD_Adjust_to_GPS_Y(task2_Middle_Point_CCD_Line[3 - 1],Left,task2_Middle_Point[3 - 1].aim_position);
+		
+			set_loc[0] = 20000;
+		
+			aim_line_point = task2_Middle_Point[3 - 1];
+			aim_line_point.speed_max = 400;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			aim_line_point.aim_position.x = 495;
+			aim_line_point.aim_position.y = 205;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			
+			aim_line_point = task2_Middle_Point[2 - 1];
+			aim_line_point.speed_max = 400;
+			Return_Any_Point(&aim_line_point,10.0,1.0,7);
+			CCD_Adjust_to_GPS_X(task2_Middle_Point_CCD_Line[2 - 1],Front,task2_Middle_Point[2 - 1].aim_position);
+		
+			aim_line_point.aim_position.x = 0;
+			aim_line_point.aim_position.y = -250.0;//-250.0
+			aim_line_point.speed_max = 200;
+			Return_Any_Point(&aim_line_point,10.0,1.0,5);
+			
+			set_loc[0] = 100000;
+			pos_Put();
+			delay_ms(500);
+			set_loc[0] = 20000;
 	}
 	/*
 	aim_line_point = task2_Take_Point_Offset[0];
